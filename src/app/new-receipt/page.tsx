@@ -10,20 +10,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Printer, Download, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore } from '@/firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 export default function NewReceiptPage() {
   const [currentReceipt, setCurrentReceipt] = useState<Receipt | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const handleReceiptGenerated = async (receipt: Receipt) => {
-    setIsSubmitting(true);
-    // Simulate API call to Firestore
-    await new Promise(resolve => setTimeout(resolve, 800));
+    if (!firestore) return;
     
-    // Save to local storage for demo purposes
-    const history = JSON.parse(localStorage.getItem('receipt_history') || '[]');
-    localStorage.setItem('receipt_history', JSON.stringify([receipt, ...history]));
+    setIsSubmitting(true);
+    
+    const receiptsRef = collection(firestore, 'receipts');
+    
+    // Initiate write to Firestore (optimistic by default in Firebase SDK)
+    addDoc(receiptsRef, receipt)
+      .catch(async (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: receiptsRef.path,
+          operation: 'create',
+          requestResourceData: receipt,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      });
     
     setCurrentReceipt(receipt);
     setIsSubmitting(false);
@@ -104,7 +118,6 @@ export default function NewReceiptPage() {
         )}
       </div>
 
-      {/* Persistent quick action for mobile */}
       {!currentReceipt && (
         <div className="fixed bottom-0 left-0 right-0 p-4 md:hidden bg-background border-t z-50">
            <p className="text-[10px] text-center mb-2 opacity-50">Wazi POS - Standard Government POS Interface</p>
