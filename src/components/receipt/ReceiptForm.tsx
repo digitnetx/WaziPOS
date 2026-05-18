@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -90,7 +89,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
     const receipt: Receipt = {
       ...values,
       id: crypto.randomUUID(),
-      billItem: `Entrance Fees per day/person (x${values.numPeople})`,
+      billItem: `Entrance Fees (x${values.numPeople})`,
       controlNumber: generateControlNumber(),
       transactionId: generateTransactionId(),
       printedAt: format(now, 'yyyy-MM-dd HH:mm:ss'),
@@ -102,16 +101,16 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4 md:space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="customerName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Payer Name</FormLabel>
+                <FormLabel className="text-xs md:text-sm">Payer Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Juma Kassim" {...field} />
+                  <Input placeholder="e.g. Juma Kassim" {...field} className="h-9 md:h-10 text-sm" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -123,9 +122,9 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
             name="customerPhone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Payer Phone</FormLabel>
+                <FormLabel className="text-xs md:text-sm">Payer Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. 0777000000" {...field} />
+                  <Input placeholder="e.g. 0777000000" {...field} className="h-9 md:h-10 text-sm" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -137,11 +136,11 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
             name="visitorType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Visitor Type</FormLabel>
+                <FormLabel className="text-xs md:text-sm">Visitor Type</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select visitor type" />
+                    <SelectTrigger className="h-9 md:h-10 text-sm">
+                      <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -156,83 +155,71 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="numPeople"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Number of People</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="numPeople"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs md:text-sm">People</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} className="h-9 md:h-10 text-sm" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paymentOption"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs md:text-sm">Option</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="h-9 md:h-10 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Exact">Exact</SelectItem>
+                      <SelectItem value="Partial">Partial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
             name="amount"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount (TZS)</FormLabel>
+              <FormItem className="md:col-span-2">
+                <FormLabel className="text-xs md:text-sm">Total Amount (TZS)</FormLabel>
                 <FormControl>
-                  <Input type="number" step="100" {...field} />
+                  <Input type="number" step="100" {...field} className="h-10 md:h-12 text-base font-bold" />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="paymentOption"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Payment Option</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Option" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Exact">Exact</SelectItem>
-                    <SelectItem value="Partial">Partial</SelectItem>
-                  </SelectContent>
-                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name="posCenterName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>POS Center</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <div className="space-y-4 pt-4 border-t">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <FormLabel className="flex items-center gap-2">
-              Instructions & Notes
-              <Sparkles className="w-4 h-4 text-accent-foreground" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <FormLabel className="flex items-center gap-2 text-xs md:text-sm">
+              Note/Instructions (AI)
+              <Sparkles className="w-3.5 h-3.5 text-accent-foreground" />
             </FormLabel>
             <div className="flex w-full sm:w-auto gap-2">
               <Select 
                 value={language} 
                 onValueChange={(v: any) => setLanguage(v)}
               >
-                <SelectTrigger className="flex-1 sm:w-[110px] h-9 text-xs">
+                <SelectTrigger className="flex-1 sm:w-[100px] h-8 text-[11px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -244,13 +231,12 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
                 type="button" 
                 variant="outline" 
                 size="sm" 
-                className="h-9 px-3 shrink-0"
+                className="h-8 px-2 shrink-0 text-[11px]"
                 onClick={handleGenerateInstructions}
                 disabled={isGeneratingAI}
               >
                 {isGeneratingAI ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                <span className="hidden xs:inline">Auto-generate</span>
-                <span className="xs:hidden">AI</span>
+                Generate
               </Button>
             </div>
           </div>
@@ -261,8 +247,8 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
               <FormItem>
                 <FormControl>
                   <Textarea 
-                    placeholder="Transaction details or additional instructions..." 
-                    className="min-h-[120px] text-sm md:text-base"
+                    placeholder="Transaction details..." 
+                    className="min-h-[80px] text-xs md:text-sm"
                     {...field} 
                   />
                 </FormControl>
@@ -272,14 +258,14 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
           />
         </div>
 
-        <div className="pt-6">
-          <Button type="submit" className="w-full gap-2 text-lg h-12 md:h-14" disabled={isSubmitting}>
+        <div className="pt-2">
+          <Button type="submit" className="w-full gap-2 text-base md:text-lg h-12 md:h-14 font-bold" disabled={isSubmitting}>
             {isSubmitting ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
                 <Save className="w-5 h-5" />
-                Generate Bill & Receipt
+                Issue Payment Order
               </>
             )}
           </Button>
