@@ -1,17 +1,16 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
-import { Loader2, Sparkles, Printer, Save, RefreshCw } from 'lucide-react';
+import { Loader2, Sparkles, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,7 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Receipt, VisitorType, PaymentOption } from '@/lib/types';
+import { Receipt } from '@/lib/types';
 import { generateControlNumber, generateTransactionId } from '@/app/lib/utils';
 import { autoGenerateReceiptInstructions } from '@/ai/flows/auto-generate-receipt-instructions';
 
@@ -86,7 +85,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
   const handleFormSubmit = (values: z.infer<typeof formSchema>) => {
     const now = new Date();
     const expiry = new Date(now);
-    expiry.setDate(expiry.getDate() + 1); // Default 24h expiry
+    expiry.setDate(expiry.getDate() + 1);
 
     const receipt: Receipt = {
       ...values,
@@ -96,7 +95,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
       transactionId: generateTransactionId(),
       printedAt: format(now, 'yyyy-MM-dd HH:mm:ss'),
       expiryDate: format(expiry, 'yyyy-MM-dd HH:mm:ss'),
-      printedBy: 'Admin Staff', // In a real app, this comes from auth
+      printedBy: 'Admin Staff',
     };
     onSubmit(receipt);
   };
@@ -223,17 +222,17 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
         />
 
         <div className="space-y-4 pt-4 border-t">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <FormLabel className="flex items-center gap-2">
               Instructions & Notes
               <Sparkles className="w-4 h-4 text-accent-foreground" />
             </FormLabel>
-            <div className="flex gap-2">
+            <div className="flex w-full sm:w-auto gap-2">
               <Select 
                 value={language} 
                 onValueChange={(v: any) => setLanguage(v)}
               >
-                <SelectTrigger className="w-[110px] h-8 text-xs">
+                <SelectTrigger className="flex-1 sm:w-[110px] h-9 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -245,11 +244,13 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
                 type="button" 
                 variant="outline" 
                 size="sm" 
+                className="h-9 px-3 shrink-0"
                 onClick={handleGenerateInstructions}
                 disabled={isGeneratingAI}
               >
                 {isGeneratingAI ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Sparkles className="w-3 h-3 mr-1" />}
-                Auto-generate
+                <span className="hidden xs:inline">Auto-generate</span>
+                <span className="xs:hidden">AI</span>
               </Button>
             </div>
           </div>
@@ -261,7 +262,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
                 <FormControl>
                   <Textarea 
                     placeholder="Transaction details or additional instructions..." 
-                    className="min-h-[100px]"
+                    className="min-h-[120px] text-sm md:text-base"
                     {...field} 
                   />
                 </FormControl>
@@ -272,7 +273,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
         </div>
 
         <div className="pt-6">
-          <Button type="submit" className="w-full gap-2 text-lg h-12" disabled={isSubmitting}>
+          <Button type="submit" className="w-full gap-2 text-lg h-12 md:h-14" disabled={isSubmitting}>
             {isSubmitting ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
