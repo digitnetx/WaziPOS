@@ -21,60 +21,66 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
     minimumFractionDigits: 0,
   }).format(receipt.amount);
 
+  // Parse dates for specific formatting
+  // Expire Date: 2025-02-10 152630 (HHmmss)
+  // Printed on: 2026-05-16T11:59:07 (ISO)
+  const [expiryDay, expiryTime] = receipt.expiryDate.split(' ');
+  const cleanExpiryTime = expiryTime ? expiryTime.replace(/:/g, '') : '';
+  
+  const [printDay, printTime] = receipt.printedAt.split(' ');
+  const isoPrintDate = `${printDay}T${printTime}`;
+
   return (
     <div 
       id={id}
       data-paper-size={paperWidth}
       className={cn(
-        "bg-white text-black p-4 sm:p-6 font-code text-[10px] sm:text-[11px] leading-tight sm:leading-relaxed shadow-sm mx-auto print:shadow-none transition-all duration-300",
+        "bg-white text-black p-4 sm:p-6 font-code text-[11px] leading-relaxed shadow-sm mx-auto print:shadow-none transition-all duration-300",
         paperWidth === '58mm' ? "w-[58mm]" : "w-[80mm]",
         className
       )}
-      style={{ minHeight: '100px' }}
+      style={{ minHeight: '100px', letterSpacing: '-0.02em' }}
     >
-      <div className="text-center mb-4 sm:mb-6 space-y-1">
-        <h1 className="text-[11px] sm:text-[12px] font-bold leading-tight uppercase">Ministry of Blue Economy and Fisheries</h1>
+      <div className="text-center mb-6 space-y-1">
+        <h1 className="text-[12px] leading-tight">Ministry of Blue Economy and Fisheries</h1>
         <div className="pt-2">
-          <p className="uppercase font-bold text-[12px] sm:text-[13px] tracking-widest border-y border-black py-1">Government Bill</p>
+          <p className="font-bold text-[14px] tracking-tight">Government Bill</p>
         </div>
       </div>
 
-      <div className="space-y-1.5 mb-4 sm:mb-6 pb-4">
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">BillItem :</span>
-          <span className="break-words">{receipt.billItem}</span>
+      <div className="space-y-1 mb-6">
+        <div className="flex gap-1">
+          <span className="shrink-0">BillItem : ;</span>
+          <span className="break-words">Entrance Fees per day/person (TZS)</span>
         </div>
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">Payer name :</span>
+        <div className="flex gap-1">
+          <span className="shrink-0">Payer name :</span>
           <span>{receipt.customerName}</span>
         </div>
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">Payer phone :</span>
+        <div className="flex gap-1">
+          <span className="shrink-0">Payer phone :</span>
           <span>{receipt.customerPhone}</span>
         </div>
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">Amount :</span>
-          <span className="text-[12px] font-bold">TZS {formattedAmountValue}</span>
+        <div className="flex gap-1">
+          <span className="shrink-0">Amount :</span>
+          <span>TZS {formattedAmountValue}</span>
         </div>
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">Pay option :</span>
+        <div className="flex gap-1">
+          <span className="shrink-0">Pay option :</span>
           <span>{receipt.paymentOption}</span>
         </div>
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">Expire Date :</span>
-          <span className="flex flex-col">
-             <span>{receipt.expiryDate.split(' ')[0]}</span>
-             <span>{receipt.expiryDate.split(' ')[1]}</span>
-          </span>
+        <div className="flex gap-1">
+          <span className="shrink-0">Expire Date :</span>
+          <span>{expiryDay} {cleanExpiryTime}</span>
         </div>
-        <div className="flex gap-2 pt-1">
-          <span className="shrink-0 font-bold">ControlNumber :</span>
-          <span className="text-[12px] font-bold">{receipt.controlNumber}</span>
+        <div className="flex gap-1">
+          <span className="shrink-0">ControlNumber :</span>
+          <span className="font-bold">{receipt.controlNumber}</span>
         </div>
       </div>
 
-      <div className="space-y-4 mb-6 pt-4 border-t border-black border-dashed">
-        <p className="leading-tight text-left">
+      <div className="space-y-1 mb-6">
+        <p className="leading-tight">
           Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa kuchagua "Malipo ya Serikali")
         </p>
         <p className="leading-tight">
@@ -82,37 +88,31 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         </p>
       </div>
 
-      <div className="space-y-2 mb-6 pt-4 border-t border-black border-dashed">
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">POS center :</span>
+      <div className="space-y-1 mb-4">
+        <div className="flex gap-1">
+          <span className="shrink-0">POS center :</span>
           <span className="uppercase">{receipt.posCenterName} (CHABAMCA)</span>
         </div>
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">Printed on :</span>
-          <span className="flex flex-col">
-             <span>{receipt.printedAt.split(' ')[0]}</span>
-             <span>{receipt.printedAt.split(' ')[1]}</span>
-          </span>
+        <div className="flex gap-1">
+          <span className="shrink-0">Printed on :</span>
+          <span>{isoPrintDate}</span>
         </div>
-        <div className="flex gap-2">
-          <span className="shrink-0 font-bold">Printed By :</span>
+        <div className="flex gap-1">
+          <span className="shrink-0">Printed By :</span>
           <span>{receipt.printedBy}</span>
         </div>
       </div>
       
       {receipt.notes && (
         <div className="mt-4 pt-4 border-t border-black border-dotted">
-          <p className="text-[9px] sm:text-[10px] italic leading-tight text-center">
+          <p className="text-[10px] italic leading-tight">
             Note: {receipt.notes}
           </p>
         </div>
       )}
 
-      <div className="mt-8 flex flex-col items-center gap-2 opacity-20">
-        <div className="w-12 h-12 border border-black flex items-center justify-center">
-           <span className="text-[6px] text-center">QR</span>
-        </div>
-      </div>
+      {/* Hidden QR spacer for layout fidelity */}
+      <div className="h-10"></div>
     </div>
   );
 };

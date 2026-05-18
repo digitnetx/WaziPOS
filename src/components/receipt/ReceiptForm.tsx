@@ -37,6 +37,7 @@ const formSchema = z.object({
   paymentOption: z.enum(['Exact', 'Partial']),
   posCenterName: z.string().min(2, "POS Center name is required"),
   notes: z.string(),
+  staffName: z.string().min(2, "Staff name is required"),
 });
 
 interface ReceiptFormProps {
@@ -59,6 +60,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
       paymentOption: 'Exact',
       posCenterName: 'CHANGU BAWE MINERAL CONSERVATION AREA',
       notes: '',
+      staffName: 'Admin Staff',
     },
   });
 
@@ -89,12 +91,12 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
     const receipt: Receipt = {
       ...values,
       id: crypto.randomUUID(),
-      billItem: `Entrance Fees (x${values.numPeople})`,
+      billItem: `Entrance Fees per day/person (TZS)`,
       controlNumber: generateControlNumber(),
       transactionId: generateTransactionId(),
       printedAt: format(now, 'yyyy-MM-dd HH:mm:ss'),
       expiryDate: format(expiry, 'yyyy-MM-dd HH:mm:ss'),
-      printedBy: 'Admin Staff',
+      printedBy: values.staffName,
     };
     onSubmit(receipt);
   };
@@ -192,6 +194,20 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="staffName"
+            render={({ field }) => (
+              <FormItem className="md:col-span-2">
+                <FormLabel className="text-xs md:text-sm">Staff Member (Printed By)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your name" {...field} className="h-9 md:h-10 text-sm" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
