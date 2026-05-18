@@ -1,10 +1,7 @@
-
 import type { Metadata } from 'next';
 import './globals.css';
-import { initializeFirebase, FirebaseClientProvider } from '@/firebase';
+import { FirebaseClientProvider } from '@/firebase';
 import { Toaster } from '@/components/ui/toaster';
-
-const { firebaseApp, firestore, auth } = initializeFirebase();
 
 export const metadata: Metadata = {
   title: 'Wazi POS - Government Receipt System',
@@ -24,7 +21,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <FirebaseClientProvider firebaseApp={firebaseApp} firestore={firestore} auth={auth}>
+        <FirebaseClientProvider>
           {children}
           <Toaster />
         </FirebaseClientProvider>
