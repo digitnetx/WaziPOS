@@ -49,12 +49,25 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 58mm; /* Standard narrow thermal size */
     margin: 0;
     padding: 0;
+    width: 100%;
   }
+  
+  /* Select specific paper sizes based on data attributes */
+  [data-paper-size="58mm"] {
+    width: 58mm !important;
+  }
+  [data-paper-size="80mm"] {
+    width: 80mm !important;
+  }
+
   @page {
     margin: 0;
-    size: 58mm auto;
   }
+}
+
+/* Custom shadow for receipt preview */
+.receipt-shadow {
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15), 0 5px 15px -5px rgba(0,0,0,0.1);
 }
