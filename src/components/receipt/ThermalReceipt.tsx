@@ -23,11 +23,11 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
   }).format(receipt.amount);
 
   // Parse dates for specific formatting from the image
-  // Expire Date: 2026-06-16 085244 (YYYY-MM-DD HHMMSS)
+  // Expire Date: 2026-06-16 234546 (YYYY-MM-DD HHMMSS)
   const [expiryDay, expiryTime] = receipt.expiryDate.split(' ');
   const cleanExpiryTime = expiryTime ? expiryTime.replace(/:/g, '') : '';
   
-  // Printed on: 2026-06-09T08:52:51
+  // Printed on: 2026-06-13T23:45:46
   const [printDay, printTime] = receipt.printedAt.split(' ');
   const isoPrintDate = `${printDay}T${printTime}`;
 
@@ -36,20 +36,20 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
       id={id}
       data-paper-size={paperWidth}
       className={cn(
-        "bg-white text-black p-4 sm:p-5 font-sans text-[11px] leading-[1.3] shadow-sm mx-auto print:shadow-none transition-all duration-300",
+        "bg-white text-black p-4 sm:p-5 font-sans text-[11px] leading-[1.2] shadow-sm mx-auto print:shadow-none transition-all duration-300",
         paperWidth === '58mm' ? "w-[58mm]" : "w-[80mm]",
         className
       )}
       style={{ minHeight: '100px', letterSpacing: '-0.01em' }}
     >
-      <div className="text-center mb-5 space-y-1.5">
-        <h1 className="text-[12px] font-bold leading-tight uppercase">Zanzibar Commission for Tourism</h1>
-        <div className="pt-1">
-          <p className="font-bold text-[13px] tracking-tight">Government Bill</p>
+      <div className="text-center mb-4 space-y-1">
+        <h1 className="text-[11.5px] font-bold leading-tight">Zanzibar Commission for Tourism</h1>
+        <div className="pt-0.5">
+          <p className="font-bold text-[12.5px] tracking-tight">Government Bill</p>
         </div>
       </div>
 
-      <div className="space-y-0.5 mb-5">
+      <div className="space-y-0.5 mb-0">
         <div className="flex gap-1">
           <span className="shrink-0">BillItem :</span>
           <span className="break-words font-medium">{receipt.billItem}</span>
@@ -80,8 +80,8 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         </div>
       </div>
 
-      <div className="space-y-1 mb-5 text-[10.5px]">
-        <p className="leading-tight">
+      <div className="space-y-1 mt-0 mb-4 text-[10.5px]">
+        <p className="leading-tight pt-1">
           Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa kuchagua "Malipo ya Serikali")
         </p>
         <p className="leading-tight">
