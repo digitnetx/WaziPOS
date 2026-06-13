@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -39,8 +40,18 @@ export default function NewReceiptPage() {
     setIsSubmitting(true);
     const receiptsRef = collection(firestore, 'receipts');
     
+    // Save to Firestore
     addDoc(receiptsRef, receipt)
+      .then(() => {
+        setCurrentReceipt(receipt);
+        setIsSubmitting(false);
+        toast({
+          title: "Bill Issued",
+          description: `Control Number: ${receipt.controlNumber} saved successfully.`,
+        });
+      })
       .catch(async (error) => {
+        setIsSubmitting(false);
         const permissionError = new FirestorePermissionError({
           path: receiptsRef.path,
           operation: 'create',
@@ -48,14 +59,6 @@ export default function NewReceiptPage() {
         });
         errorEmitter.emit('permission-error', permissionError);
       });
-    
-    setCurrentReceipt(receipt);
-    setIsSubmitting(false);
-    
-    toast({
-      title: "Receipt Generated",
-      description: `Control Number: ${receipt.controlNumber} issued successfully.`,
-    });
   };
 
   const handlePrint = () => {
@@ -73,7 +76,7 @@ export default function NewReceiptPage() {
         {!currentReceipt ? (
           <div className="max-w-4xl mx-auto">
             <div className="mb-4 md:mb-6">
-              <h1 className="text-xl md:text-3xl font-headline font-bold">Issue New Government Bill</h1>
+              <h1 className="text-xl md:text-3xl font-headline font-bold text-primary">Issue Government Bill</h1>
             </div>
             <Card className="border-accent/20">
               <CardContent className="p-4 md:p-6">
@@ -85,8 +88,8 @@ export default function NewReceiptPage() {
           <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="text-center space-y-2">
               <CheckCircle2 className="w-10 h-10 md:w-16 md:h-16 text-primary mx-auto" />
-              <h1 className="text-xl md:text-3xl font-headline font-bold">Bill Generated</h1>
-              <p className="text-xs md:text-base text-muted-foreground">The government payment order is ready.</p>
+              <h1 className="text-xl md:text-3xl font-headline font-bold">Payment Order Ready</h1>
+              <p className="text-xs md:text-base text-muted-foreground">The government bill has been generated and saved.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
@@ -95,7 +98,7 @@ export default function NewReceiptPage() {
                   <CardHeader className="p-4 md:p-6">
                     <CardTitle className="text-base md:text-lg flex items-center gap-2">
                       <FileText className="w-5 h-5" />
-                      Payment Summary
+                      Bill Details
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 md:p-6 pt-0 space-y-6">
@@ -105,8 +108,8 @@ export default function NewReceiptPage() {
                           <span className="font-code font-bold text-primary text-sm md:text-base">{currentReceipt.controlNumber}</span>
                        </div>
                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Amount Due</span>
-                          <span className="font-bold text-primary text-sm md:text-base">{new Intl.NumberFormat('en-TZ', { style: 'currency', currency: 'TZS' }).format(currentReceipt.amount)}</span>
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Total Amount</span>
+                          <span className="font-bold text-primary text-sm md:text-base">TZS {new Intl.NumberFormat('en-TZ').format(currentReceipt.amount)}</span>
                        </div>
                     </div>
 
@@ -114,16 +117,16 @@ export default function NewReceiptPage() {
                       <div className="flex flex-col gap-3">
                         <Button onClick={handlePrint} className="gap-2 h-12 md:h-14 text-base md:text-lg font-bold shadow-xl">
                           <Printer className="w-5 h-5" />
-                          Print Thermal Receipt
+                          Print Receipt
                         </Button>
                         <div className="grid grid-cols-2 gap-2">
                           <Button variant="outline" className="gap-2 h-10 md:h-11 text-xs md:text-sm">
                             <Download className="w-4 h-4" />
-                            PDF Copy
+                            Download
                           </Button>
                           <Button variant="ghost" onClick={reset} className="gap-2 h-10 md:h-11 text-xs md:text-sm">
                             <ArrowLeft className="w-4 h-4" />
-                            New Bill
+                            New Entry
                           </Button>
                         </div>
                       </div>
