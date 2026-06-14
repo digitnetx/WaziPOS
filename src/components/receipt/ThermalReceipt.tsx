@@ -42,10 +42,10 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
       )}
       style={{ minHeight: '100px', letterSpacing: '-0.01em' }}
     >
-      <div className="text-center mb-4 space-y-1">
-        <h1 className="text-[11.5px] font-bold leading-tight">Zanzibar Commission for Tourism</h1>
+      <div className="text-center mb-3 space-y-0">
+        <h1 className="text-[11px] leading-tight lowercase">zanzibar commission for tourism</h1>
         <div className="pt-0.5">
-          <p className="font-bold text-[12.5px] tracking-tight">Government Bill</p>
+          <p className="font-bold text-[13px] tracking-tight">Government Bill</p>
         </div>
       </div>
 
@@ -78,18 +78,19 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
           <span className="shrink-0">ControlNumber :</span>
           <span className="font-bold">{receipt.controlNumber}</span>
         </div>
+        
+        {/* Removed spacing between ControlNumber and Instructions */}
+        <div className="pt-1 text-[10px]">
+          <p className="leading-tight">
+            Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa kuchagua "Malipo ya Serikali")
+          </p>
+          <p className="leading-tight mt-0.5">
+            Piga namba 0776188344 kwa maelezo Zaidi.
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-1 mt-0 mb-4 text-[10.5px]">
-        <p className="leading-tight pt-1">
-          Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa kuchagua "Malipo ya Serikali")
-        </p>
-        <p className="leading-tight">
-          Piga namba 0776188344 kwa maelezo Zaidi.
-        </p>
-      </div>
-
-      <div className="space-y-0.5 mb-4 text-[10.5px]">
+      <div className="space-y-0.5 mt-3 mb-4 text-[10px]">
         <div className="flex gap-1">
           <span className="shrink-0">POS center :</span>
           <span className="capitalize">{receipt.posCenterName}</span>
@@ -105,8 +106,8 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
       </div>
       
       {receipt.notes && (
-        <div className="mt-3 pt-3 border-t border-black border-dotted">
-          <p className="text-[10px] italic leading-tight">
+        <div className="mt-3 pt-2 border-t border-black border-dotted">
+          <p className="text-[9.5px] italic leading-tight">
             Note: {receipt.notes}
           </p>
         </div>
