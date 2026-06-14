@@ -37,21 +37,16 @@ export default function NewReceiptPage() {
   const handleReceiptGenerated = async (receipt: Receipt) => {
     if (!firestore) return;
     
-    setIsSubmitting(true);
+    // Instant UI feedback: Show the preview immediately
+    setCurrentReceipt(receipt);
+    setIsSubmitting(false);
+    
     const receiptsRef = collection(firestore, 'receipts');
     
-    // Save to Firestore
+    // Background write to Firestore (fire and forget)
+    // This ensures the UI doesn't block on network latency
     addDoc(receiptsRef, receipt)
-      .then(() => {
-        setCurrentReceipt(receipt);
-        setIsSubmitting(false);
-        toast({
-          title: "Bill Issued",
-          description: `Control Number: ${receipt.controlNumber} saved successfully.`,
-        });
-      })
       .catch(async (error) => {
-        setIsSubmitting(false);
         const permissionError = new FirestorePermissionError({
           path: receiptsRef.path,
           operation: 'create',
@@ -59,6 +54,11 @@ export default function NewReceiptPage() {
         });
         errorEmitter.emit('permission-error', permissionError);
       });
+
+    toast({
+      title: "Bill Issued",
+      description: `Control Number: ${receipt.controlNumber} generated.`,
+    });
   };
 
   const handlePrint = () => {
