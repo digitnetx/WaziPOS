@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -54,13 +53,13 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      customerName: '',
-      customerPhone: '',
+      customerName: 'Sajid',
+      customerPhone: '0652810564',
       visitorType: 'International Tourist',
       numPeople: 1,
-      amount: 0,
+      amount: 49998,
       paymentOption: 'Exact',
-      posCenterName: 'CHANGU BAWE MINERAL CONSERVATION AREA (CHABAMCA)',
+      posCenterName: 'CHANGU BAWE MINERAL CONSERVATION AREA(CHABAMCA)',
       notes: '',
       staffName: 'Mwanaid Khamis',
       billItem: 'Entrance fees per day/person (TZS)',
@@ -97,7 +96,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
       controlNumber: generateControlNumber(),
       transactionId: generateTransactionId(),
       printedAt: format(now, 'yyyy-MM-dd HH:mm:ss'),
-      expiryDate: format(now, 'yyyy-MM-dd HHmmss'), // Exact format from image: YYYY-MM-DD HHMMSS
+      expiryDate: format(expiry, 'yyyy-MM-dd HH:mm:ss'), // This will be formatted to HHMMSS in ThermalReceipt
       printedBy: values.staffName,
     };
     onSubmit(receipt);
