@@ -96,7 +96,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
       controlNumber: generateControlNumber(),
       transactionId: generateTransactionId(),
       printedAt: format(now, 'yyyy-MM-dd HH:mm:ss'),
-      expiryDate: format(expiry, 'yyyy-MM-dd HH:mm:ss'), // This will be formatted to HHMMSS in ThermalReceipt
+      expiryDate: format(expiry, 'yyyy-MM-dd HH:mm:ss'),
       printedBy: values.staffName,
     };
     onSubmit(receipt);
