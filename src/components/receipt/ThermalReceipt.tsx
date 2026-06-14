@@ -43,7 +43,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
       style={{ minHeight: '100px', letterSpacing: '-0.01em' }}
     >
       <div className="text-center mb-3 space-y-0">
-        <h1 className="text-[11px] leading-tight lowercase">zanzibar commission for tourism</h1>
+        <h1 className="text-[11px] leading-tight">Ministry of Blue Economy and Fisheries</h1>
         <div className="pt-0.5">
           <p className="font-bold text-[13px] tracking-tight">Government Bill</p>
         </div>
@@ -79,13 +79,13 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
           <span className="font-bold">{receipt.controlNumber}</span>
         </div>
         
-        {/* Removed spacing between ControlNumber and Instructions */}
-        <div className="pt-1 text-[10px]">
+        {/* No space between ControlNumber and Instructions */}
+        <div className="pt-0 text-[10px]">
           <p className="leading-tight">
             Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa kuchagua "Malipo ya Serikali")
           </p>
-          <p className="leading-tight mt-0.5">
-            Piga namba 0776188344 kwa maelezo Zaidi.
+          <p className="leading-tight">
+            Piga namba 0777350786 kwa maelezo Zaidi.
           </p>
         </div>
       </div>
@@ -93,7 +93,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
       <div className="space-y-0.5 mt-3 mb-4 text-[10px]">
         <div className="flex gap-1">
           <span className="shrink-0">POS center :</span>
-          <span className="capitalize">{receipt.posCenterName}</span>
+          <span className="uppercase">{receipt.posCenterName}</span>
         </div>
         <div className="flex gap-1">
           <span className="shrink-0">Printed on :</span>
@@ -101,7 +101,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         </div>
         <div className="flex gap-1">
           <span className="shrink-0">Printed By :</span>
-          <span className="lowercase">{receipt.printedBy}</span>
+          <span className="capitalize">{receipt.printedBy}</span>
         </div>
       </div>
       

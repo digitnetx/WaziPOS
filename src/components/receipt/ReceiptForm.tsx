@@ -60,10 +60,10 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
       numPeople: 1,
       amount: 0,
       paymentOption: 'Exact',
-      posCenterName: 'Head Quarter',
+      posCenterName: 'CHANGU BAWE MINERAL CONSERVATION AREA (CHABAMCA)',
       notes: '',
-      staffName: 'abdulrahman bakar',
-      billItem: 'Permit for Motor Vehicle',
+      staffName: 'Mwanaid Khamis',
+      billItem: 'Entrance fees per day/person (TZS)',
     },
   });
 
@@ -112,9 +112,9 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
             name="customerName"
             render={({ field }) => (
               <FormItem className="md:col-span-2">
-                <FormLabel className="text-xs md:text-sm">Payer Name (e.g. Hassan. Z 380 AAU)</FormLabel>
+                <FormLabel className="text-xs md:text-sm">Payer Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter payer name and details" {...field} className="h-9 md:h-10 text-sm" />
+                  <Input placeholder="Enter payer name" {...field} className="h-9 md:h-10 text-sm" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,7 +128,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
               <FormItem>
                 <FormLabel className="text-xs md:text-sm">Payer Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. 0710919860" {...field} className="h-9 md:h-10 text-sm" />
+                  <Input placeholder="e.g. 0000000000" {...field} className="h-9 md:h-10 text-sm" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -142,7 +142,7 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
               <FormItem>
                 <FormLabel className="text-xs md:text-sm">Bill Item</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Permit for Motor Vehicle" {...field} className="h-9 md:h-10 text-sm" />
+                  <Input placeholder="e.g. Entrance fees..." {...field} className="h-9 md:h-10 text-sm" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
