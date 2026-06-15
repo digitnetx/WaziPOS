@@ -107,20 +107,20 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         Zaidi.
       </div>
 
-      {/* POS and Footer - Label and Value on separate lines as per new design */}
+      {/* POS and Footer - Label and Value on the same line as per new feedback */}
       <div style={{ fontSize: '13px', lineHeight: '1.4' }}>
-        <div style={{ marginBottom: '16px' }}>
-          <span style={labelStyle}>POS center : </span><br />
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>POS center : </span>
           <span style={boldStyle}>{receipt.posCenterName}</span>
         </div>
 
-        <div style={{ marginBottom: '16px' }}>
-          <span style={labelStyle}>Printed on : </span><br />
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>Printed on : </span>
           <span style={boldStyle}>{isoPrintDate}</span>
         </div>
 
         <div>
-          <span style={labelStyle}>Printed By : </span><br />
+          <span style={labelStyle}>Printed By : </span>
           <span style={boldStyle}>{receipt.printedBy}</span>
         </div>
       </div>
