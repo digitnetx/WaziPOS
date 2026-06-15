@@ -18,84 +18,98 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
   id,
   paperWidth = '58mm' 
 }) => {
-  // Exact currency formatting for the thermal look: TZS 10,000
-  const formattedAmountValue = new Intl.NumberFormat('en-US', {
+  // Format values for thermal consistency
+  const formattedAmount = `TZS ${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(receipt.amount);
+  }).format(receipt.amount)}`;
 
-  // Exact date formatting: 2026-06-28 111955
   const [expiryDay, expiryTime] = (receipt.expiryDate || "").split(' ');
   const cleanExpiryTime = expiryTime ? expiryTime.replace(/:/g, '') : '';
+  const formattedExpireDate = `${expiryDay} ${cleanExpiryTime}`;
   
-  // Exact print date: 2026-05-29T11:20:03
   const [printDay, printTime] = (receipt.printedAt || "").split(' ');
   const isoPrintDate = `${printDay}T${printTime}`;
 
-  // Replicating the exact wrapping and tight spacing from the provided image
-  const receiptContent = `BillItem : Entrance fees per da
-y/person
-(TZS)
-
-Payer name : ${receipt.customerName}
-Payer phone : ${receipt.customerPhone}
-Amount : TZS ${formattedAmountValue}
-Pay option : ${receipt.paymentOption}
-Expire Date : ${expiryDay} ${cleanExpiryTime}
-ControlNumber : ${receipt.controlNumber}
-Lipa kupitia Benki (NMB/BOT/PB
-Z) na M
-awakala wake au Mitandao ya Sim
-u (kwa
-kuchagua "Malipo ya Serikali")
-Piga namba 0777350786 kwa maele
-zo Z
-aidi.
-
-POS center : CHANGU BAWE MINERA
-L C
-ONSERVATION AREA (CHABAMCA)
-Printed on : ${isoPrintDate.substring(0, 19)}
-${isoPrintDate.substring(19)}
-Printed By : ${receipt.printedBy}`;
+  // Container styling to replicate physical paper
+  const containerStyle: React.CSSProperties = {
+    width: paperWidth === '58mm' ? '58mm' : '80mm',
+    backgroundColor: '#fff',
+    color: '#000',
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    fontSize: '14px',
+    lineHeight: '1.45',
+    padding: '35px 15px 60px 15px',
+    boxSizing: 'border-box',
+    textAlign: 'left',
+    margin: '0 auto',
+  };
 
   return (
-    <div 
-      id={id}
-      data-paper-size={paperWidth}
-      className={cn(
-        "bg-white text-black p-0 mx-auto transition-all duration-300",
-        paperWidth === '58mm' ? "w-[58mm]" : "w-[80mm]",
-        className
-      )}
-      style={{ 
-        fontFamily: "'Source Code Pro', monospace",
-        fontSize: '11px',
-        lineHeight: '1.3',
-        color: '#000',
-        textAlign: 'left',
-        padding: '8mm 4mm',
-        minHeight: 'auto',
-        border: 'none',
-        boxShadow: 'none',
-        wordBreak: 'break-all'
-      }}
-    >
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '6mm' }}>
-        <div style={{ marginBottom: '1mm', fontSize: '11px', whiteSpace: 'pre-wrap' }}>
-          Ministry of Blue Economy and Fi{'\n'}sheries
+    <div id={id} style={containerStyle} className={className}>
+      {/* Header Section */}
+      <div style={{ textAlign: 'center', marginBottom: '35px' }}>
+        <div style={{ fontSize: '14px', fontWeight: 400 }}>
+          Ministry of Blue Economy and<br />Fisheries
         </div>
-        <div style={{ fontWeight: 'bold', fontSize: '12px', marginTop: '4mm' }}>Government Bill</div>
+        <div style={{ fontSize: '17px', fontWeight: 700, marginTop: '20px' }}>
+          Government Bill
+        </div>
       </div>
 
-      {/* Body */}
-      <div style={{ whiteSpace: 'pre-wrap', color: '#000', fontWeight: '500' }}>
-        {receiptContent}
+      {/* Body Section */}
+      <div style={{ whiteSpace: 'pre-wrap' }}>
+        <div style={{ marginBottom: '10px' }}>
+          BillItem : <span style={{ fontWeight: 700 }}>{receipt.billItem}</span><br />
+          <span style={{ fontWeight: 700 }}>           (TZS)</span>
+        </div>
+
+        <div style={{ marginBottom: '10px' }}>
+          Payer name : {receipt.customerName}<br />
+          Payer phone : {receipt.customerPhone}
+        </div>
+
+        <div style={{ marginBottom: '10px' }}>
+          Amount : <span style={{ fontWeight: 700 }}>{formattedAmount}</span>
+        </div>
+
+        <div style={{ marginBottom: '10px' }}>
+          Pay option : <span style={{ fontWeight: 700 }}>{receipt.paymentOption}</span>
+        </div>
+
+        <div style={{ marginBottom: '10px' }}>
+          Expire Date : <span style={{ fontWeight: 700 }}>{formattedExpireDate}</span>
+        </div>
+
+        <div style={{ marginBottom: '0px' }}>
+          ControlNumber : <span style={{ fontWeight: 700 }}>{receipt.controlNumber}</span>
+        </div>
       </div>
 
-      {/* Extra space for printer tear-off */}
-      <div style={{ height: '20mm' }}></div>
+      {/* Instructions Section - Tightly packed to ControlNumber */}
+      <div style={{ fontSize: '13px', lineHeight: '1.35', whiteSpace: 'pre-wrap' }}>
+        Lipa kupitia Benki (NMB/BOT/PBZ) na<br />
+        Mawakala wake au Mitandao ya Simu<br />
+        (kwa kuchagua "Malipo ya Serikali")<br />
+        Piga namba 0777350786 kwa maelezo<br />
+        Zaidi.
+      </div>
+
+      {/* POS and Footer - Separated by blank lines as requested */}
+      <div style={{ marginTop: '25px', whiteSpace: 'pre-wrap' }}>
+        POS center : <br />
+        <span style={{ fontWeight: 700 }}>{receipt.posCenterName}</span>
+      </div>
+
+      <div style={{ marginTop: '20px', fontSize: '13px' }}>
+        Printed on : <br />
+        {isoPrintDate}
+      </div>
+
+      <div style={{ marginTop: '10px', fontSize: '13px' }}>
+        Printed By : <br />
+        {receipt.printedBy}
+      </div>
     </div>
   );
 };
