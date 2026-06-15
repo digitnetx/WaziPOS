@@ -30,14 +30,14 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
   const [printDay, printTime] = (receipt.printedAt || "").split(' ');
   const isoPrintDate = `${printDay}T${printTime}`;
 
-  // Container styling to replicate physical paper based on your Arial 14px spec
+  // Container styling based on Arial 14px specification
   const containerStyle: React.CSSProperties = {
     width: paperWidth === '58mm' ? '58mm' : '80mm',
     backgroundColor: '#fff',
     color: '#000',
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '14px',
-    lineHeight: '1.4',
+    lineHeight: '1.45',
     padding: '35px 15px 40px 15px',
     boxSizing: 'border-box',
     textAlign: 'left',
@@ -49,8 +49,8 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
 
   return (
     <div id={id} style={containerStyle} className={className}>
-      {/* Header Section */}
-      <div style={{ textAlign: 'center', marginBottom: '25px' }}>
+      {/* Header Section - Ministry on one line */}
+      <div style={{ textAlign: 'center', marginBottom: '35px' }}>
         <div style={{ fontSize: '14px', fontWeight: 400, marginBottom: '2px' }}>
           Ministry of Blue Economy and Fisheries
         </div>
@@ -59,8 +59,8 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         </div>
       </div>
 
-      {/* Body Section - No space between lines */}
-      <div style={{ marginBottom: '15px' }}>
+      {/* Body Section */}
+      <div style={{ marginBottom: '0px' }}>
         <div style={{ marginBottom: '4px' }}>
           <span style={labelStyle}>BillItem : </span>
           <span style={boldStyle}>{receipt.billItem}</span><br />
@@ -98,8 +98,8 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         </div>
       </div>
 
-      {/* Instructions Section - Compact, immediately after ControlNumber */}
-      <div style={{ fontSize: '13px', lineHeight: '1.3', marginBottom: '25px' }}>
+      {/* Instruction Section - No space after ControlNumber */}
+      <div style={{ fontSize: '13.5px', lineHeight: '1.4', marginBottom: '35px' }}>
         Lipa kupitia Benki (NMB/BOT/PBZ) na<br />
         Mawakala wake au Mitandao ya Simu<br />
         (kwa kuchagua "Malipo ya Serikali")<br />
@@ -107,14 +107,14 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         Zaidi.
       </div>
 
-      {/* POS and Footer - Line breaks between label and value */}
-      <div style={{ fontSize: '13px', lineHeight: '1.35' }}>
-        <div style={{ marginBottom: '12px' }}>
+      {/* POS and Footer - Label and Value on separate lines as per new design */}
+      <div style={{ fontSize: '13px', lineHeight: '1.4' }}>
+        <div style={{ marginBottom: '16px' }}>
           <span style={labelStyle}>POS center : </span><br />
           <span style={boldStyle}>{receipt.posCenterName}</span>
         </div>
 
-        <div style={{ marginBottom: '12px' }}>
+        <div style={{ marginBottom: '16px' }}>
           <span style={labelStyle}>Printed on : </span><br />
           <span style={boldStyle}>{isoPrintDate}</span>
         </div>
