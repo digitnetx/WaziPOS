@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { Receipt } from '@/lib/types';
-import { cn } from '@/lib/utils';
 
 interface ThermalReceiptProps {
   receipt: Receipt;
@@ -31,63 +30,76 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
   const [printDay, printTime] = (receipt.printedAt || "").split(' ');
   const isoPrintDate = `${printDay}T${printTime}`;
 
-  // Container styling to replicate physical paper
+  // Container styling to replicate physical paper based on your Arial 14px spec
   const containerStyle: React.CSSProperties = {
     width: paperWidth === '58mm' ? '58mm' : '80mm',
     backgroundColor: '#fff',
     color: '#000',
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: '14px',
-    lineHeight: '1.45',
-    padding: '35px 15px 60px 15px',
+    lineHeight: '1.4',
+    padding: '35px 15px 40px 15px',
     boxSizing: 'border-box',
     textAlign: 'left',
     margin: '0 auto',
   };
 
+  const boldStyle: React.CSSProperties = { fontWeight: 700 };
+  const labelStyle: React.CSSProperties = { fontWeight: 400 };
+
   return (
     <div id={id} style={containerStyle} className={className}>
       {/* Header Section */}
-      <div style={{ textAlign: 'center', marginBottom: '35px' }}>
-        <div style={{ fontSize: '14px', fontWeight: 400 }}>
-          Ministry of Blue Economy and<br />Fisheries
+      <div style={{ textAlign: 'center', marginBottom: '25px' }}>
+        <div style={{ fontSize: '14px', fontWeight: 400, marginBottom: '2px' }}>
+          Ministry of Blue Economy and Fisheries
         </div>
-        <div style={{ fontSize: '17px', fontWeight: 700, marginTop: '20px' }}>
+        <div style={{ fontSize: '17px', fontWeight: 700 }}>
           Government Bill
         </div>
       </div>
 
-      {/* Body Section */}
-      <div style={{ whiteSpace: 'pre-wrap' }}>
-        <div style={{ marginBottom: '10px' }}>
-          BillItem : <span style={{ fontWeight: 700 }}>{receipt.billItem}</span><br />
-          <span style={{ fontWeight: 700 }}>           (TZS)</span>
+      {/* Body Section - No space between lines */}
+      <div style={{ marginBottom: '15px' }}>
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>BillItem : </span>
+          <span style={boldStyle}>{receipt.billItem}</span><br />
+          <span style={boldStyle}>(TZS)</span>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          Payer name : {receipt.customerName}<br />
-          Payer phone : {receipt.customerPhone}
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>Payer name : </span>
+          <span style={boldStyle}>{receipt.customerName}</span>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          Amount : <span style={{ fontWeight: 700 }}>{formattedAmount}</span>
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>Payer phone : </span>
+          <span style={boldStyle}>{receipt.customerPhone}</span>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          Pay option : <span style={{ fontWeight: 700 }}>{receipt.paymentOption}</span>
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>Amount : </span>
+          <span style={boldStyle}>{formattedAmount}</span>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          Expire Date : <span style={{ fontWeight: 700 }}>{formattedExpireDate}</span>
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>Pay option : </span>
+          <span style={boldStyle}>{receipt.paymentOption}</span>
         </div>
 
-        <div style={{ marginBottom: '0px' }}>
-          ControlNumber : <span style={{ fontWeight: 700 }}>{receipt.controlNumber}</span>
+        <div style={{ marginBottom: '4px' }}>
+          <span style={labelStyle}>Expire Date : </span>
+          <span style={boldStyle}>{formattedExpireDate}</span>
+        </div>
+
+        <div>
+          <span style={labelStyle}>ControlNumber : </span>
+          <span style={boldStyle}>{receipt.controlNumber}</span>
         </div>
       </div>
 
-      {/* Instructions Section - Tightly packed to ControlNumber */}
-      <div style={{ fontSize: '13px', lineHeight: '1.35', whiteSpace: 'pre-wrap' }}>
+      {/* Instructions Section - Compact, immediately after ControlNumber */}
+      <div style={{ fontSize: '13px', lineHeight: '1.3', marginBottom: '25px' }}>
         Lipa kupitia Benki (NMB/BOT/PBZ) na<br />
         Mawakala wake au Mitandao ya Simu<br />
         (kwa kuchagua "Malipo ya Serikali")<br />
@@ -95,20 +107,22 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         Zaidi.
       </div>
 
-      {/* POS and Footer - Separated by blank lines as requested */}
-      <div style={{ marginTop: '25px', whiteSpace: 'pre-wrap' }}>
-        POS center : <br />
-        <span style={{ fontWeight: 700 }}>{receipt.posCenterName}</span>
-      </div>
+      {/* POS and Footer - Line breaks between label and value */}
+      <div style={{ fontSize: '13px', lineHeight: '1.35' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <span style={labelStyle}>POS center : </span><br />
+          <span style={boldStyle}>{receipt.posCenterName}</span>
+        </div>
 
-      <div style={{ marginTop: '20px', fontSize: '13px' }}>
-        Printed on : <br />
-        {isoPrintDate}
-      </div>
+        <div style={{ marginBottom: '12px' }}>
+          <span style={labelStyle}>Printed on : </span><br />
+          <span style={boldStyle}>{isoPrintDate}</span>
+        </div>
 
-      <div style={{ marginTop: '10px', fontSize: '13px' }}>
-        Printed By : <br />
-        {receipt.printedBy}
+        <div>
+          <span style={labelStyle}>Printed By : </span><br />
+          <span style={boldStyle}>{receipt.printedBy}</span>
+        </div>
       </div>
     </div>
   );
