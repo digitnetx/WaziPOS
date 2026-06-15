@@ -33,7 +33,8 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
   const isoPrintDate = `${printDay}T${printTime}`;
 
   // Replicating the exact wrapping and tight spacing from the provided image
-  const receiptContent = `BillItem : Entrance fees per day/person
+  const receiptContent = `BillItem : Entrance fees per da
+y/person
 (TZS)
 
 Payer name : ${receipt.customerName}
@@ -42,15 +43,20 @@ Amount : TZS ${formattedAmountValue}
 Pay option : ${receipt.paymentOption}
 Expire Date : ${expiryDay} ${cleanExpiryTime}
 ControlNumber : ${receipt.controlNumber}
-Lipa kupitia Benki (NMB/BOT/PBZ) na M
-awakala wake au Mitandao ya Simu (kwa
+Lipa kupitia Benki (NMB/BOT/PB
+Z) na M
+awakala wake au Mitandao ya Sim
+u (kwa
 kuchagua "Malipo ya Serikali")
-Piga namba 0777350786 kwa maelezo Z
+Piga namba 0777350786 kwa maele
+zo Z
 aidi.
 
-POS center : CHANGU BAWE MINERAL C
+POS center : CHANGU BAWE MINERA
+L C
 ONSERVATION AREA (CHABAMCA)
-Printed on : ${isoPrintDate}
+Printed on : ${isoPrintDate.substring(0, 19)}
+${isoPrintDate.substring(19)}
 Printed By : ${receipt.printedBy}`;
 
   return (
@@ -63,7 +69,7 @@ Printed By : ${receipt.printedBy}`;
         className
       )}
       style={{ 
-        fontFamily: 'monospace',
+        fontFamily: "'Source Code Pro', monospace",
         fontSize: '11px',
         lineHeight: '1.3',
         color: '#000',
@@ -77,7 +83,9 @@ Printed By : ${receipt.printedBy}`;
     >
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '6mm' }}>
-        <div style={{ marginBottom: '2mm', fontSize: '11px' }}>Ministry of Blue Economy and Fisheries</div>
+        <div style={{ marginBottom: '1mm', fontSize: '11px', whiteSpace: 'pre-wrap' }}>
+          Ministry of Blue Economy and Fi{'\n'}sheries
+        </div>
         <div style={{ fontWeight: 'bold', fontSize: '12px', marginTop: '4mm' }}>Government Bill</div>
       </div>
 
