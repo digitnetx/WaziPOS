@@ -18,47 +18,39 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
   id,
   paperWidth = '58mm' 
 }) => {
-  // Exact currency formatting for the thermal look: TZS 49,998
+  // Exact currency formatting for the thermal look: TZS 10,000
   const formattedAmountValue = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(receipt.amount);
 
-  // Exact date formatting: 2026-06-15 000319
+  // Exact date formatting: 2026-06-28 111955
   const [expiryDay, expiryTime] = (receipt.expiryDate || "").split(' ');
   const cleanExpiryTime = expiryTime ? expiryTime.replace(/:/g, '') : '';
   
-  // Exact print date: 2026-06-15T00:03:19
+  // Exact print date: 2026-05-29T11:20:03
   const [printDay, printTime] = (receipt.printedAt || "").split(' ');
   const isoPrintDate = `${printDay}T${printTime}`;
 
-  // Using a template literal with white-space: pre-wrap to control every character and line break
+  // Replicating the exact wrapping and tight spacing from the provided image
   const receiptContent = `BillItem : Entrance fees per day/person
-           (TZS)
+(TZS)
 
 Payer name : ${receipt.customerName}
 Payer phone : ${receipt.customerPhone}
-
 Amount : TZS ${formattedAmountValue}
-
 Pay option : ${receipt.paymentOption}
-
 Expire Date : ${expiryDay} ${cleanExpiryTime}
-
 ControlNumber : ${receipt.controlNumber}
-Lipa kupitia Benki (NMB/BOT/PBZ) na
-Mawakala wake au Mitandao ya Simu
-(kwa kuchagua "Malipo ya Serikali")
-Piga namba 0777350786 kwa maelezo
-Zaidi.
+Lipa kupitia Benki (NMB/BOT/PBZ) na M
+awakala wake au Mitandao ya Simu (kwa
+kuchagua "Malipo ya Serikali")
+Piga namba 0777350786 kwa maelezo Z
+aidi.
 
-
-POS center : CHANGU BAWE MINERAL
-             CONSERVATION AREA(CHABAMCA)
-
-
+POS center : CHANGU BAWE MINERAL C
+ONSERVATION AREA (CHABAMCA)
 Printed on : ${isoPrintDate}
-
 Printed By : ${receipt.printedBy}`;
 
   return (
@@ -71,31 +63,31 @@ Printed By : ${receipt.printedBy}`;
         className
       )}
       style={{ 
-        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontFamily: 'monospace',
         fontSize: '11px',
-        lineHeight: '1.5',
+        lineHeight: '1.3',
         color: '#000',
         textAlign: 'left',
-        padding: '10mm 4mm',
+        padding: '8mm 4mm',
         minHeight: 'auto',
         border: 'none',
         boxShadow: 'none',
         wordBreak: 'break-all'
       }}
     >
-      {/* Header - Centered exactly as in image */}
-      <div style={{ textAlign: 'center', marginBottom: '8mm' }}>
-        <div style={{ marginBottom: '4mm', textTransform: 'none' }}>Ministry of Blue Economy and Fisheries</div>
-        <div style={{ fontWeight: 'bold', fontSize: '13px' }}>Government Bill</div>
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '6mm' }}>
+        <div style={{ marginBottom: '2mm', fontSize: '11px' }}>Ministry of Blue Economy and Fisheries</div>
+        <div style={{ fontWeight: 'bold', fontSize: '12px', marginTop: '4mm' }}>Government Bill</div>
       </div>
 
-      {/* Body - Pure text with white-space: pre-wrap */}
-      <div style={{ whiteSpace: 'pre-wrap', color: '#000' }}>
+      {/* Body */}
+      <div style={{ whiteSpace: 'pre-wrap', color: '#000', fontWeight: '500' }}>
         {receiptContent}
       </div>
 
-      {/* Extra space for printer tear-off gap */}
-      <div style={{ height: '25mm' }}></div>
+      {/* Extra space for printer tear-off */}
+      <div style={{ height: '20mm' }}></div>
     </div>
   );
 };

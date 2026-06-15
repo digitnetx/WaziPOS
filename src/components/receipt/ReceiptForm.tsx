@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -54,15 +55,15 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
     resolver: zodResolver(formSchema),
     defaultValues: {
       customerName: 'Sajid',
-      customerPhone: '0652810564',
+      customerPhone: '0000000000',
       visitorType: 'International Tourist',
       numPeople: 1,
-      amount: 49998,
+      amount: 10000,
       paymentOption: 'Exact',
-      posCenterName: 'CHANGU BAWE MINERAL CONSERVATION AREA(CHABAMCA)',
+      posCenterName: 'CHANGU BAWE MINERAL CONSERVATION AREA (CHABAMCA)',
       notes: '',
       staffName: 'Mwanaid Khamis',
-      billItem: 'Entrance fees per day/person (TZS)',
+      billItem: 'Entrance fees per day/person',
     },
   });
 
