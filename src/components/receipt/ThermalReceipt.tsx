@@ -49,12 +49,14 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
 
   return (
     <div id={id} style={containerStyle} className={className}>
-      {/* Header Section - Ministry on one line */}
-      <div style={{ textAlign: 'center', marginBottom: '35px' }}>
-        <div style={{ fontSize: '14px', fontWeight: 400, marginBottom: '2px' }}>
+      {/* Header Section - Ministry and Title with exact vertical centering */}
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: '14px', fontWeight: 400 }}>
           Ministry of Blue Economy and Fisheries
         </div>
-        <div style={{ fontSize: '17px', fontWeight: 700 }}>
+        
+        {/* 'Government Bill' positioned exactly halfway between Ministry and Body */}
+        <div style={{ margin: '35px 0', fontSize: '17px', fontWeight: 700 }}>
           Government Bill
         </div>
       </div>
@@ -107,7 +109,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         Zaidi.
       </div>
 
-      {/* POS and Footer - Label and Value on the same line as per new feedback */}
+      {/* POS and Footer - Label and Value on the same line */}
       <div style={{ fontSize: '13px', lineHeight: '1.4' }}>
         <div style={{ marginBottom: '4px' }}>
           <span style={labelStyle}>POS center : </span>
