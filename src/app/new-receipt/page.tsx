@@ -25,20 +25,25 @@ export default function NewReceiptPage() {
   const firestore = useFirestore();
 
   const handleReceiptGenerated = async (receipt: Receipt) => {
-    if (!firestore) return;
+    // Receipt generation must not depend on Firebase being initialized.
+    // The POS can generate and print a bill even when the database is offline.
     setCurrentReceipt(receipt);
     setIsSubmitting(false);
 
-    const receiptsRef = collection(firestore, 'receipts');
-    addDoc(receiptsRef, receipt).catch(async (error) => {
-      const permissionError = new FirestorePermissionError({
-        path: receiptsRef.path,
-        operation: 'create',
-        requestResourceData: receipt,
+    if (firestore) {
+      const receiptsRef = collection(firestore, 'receipts');
+      addDoc(receiptsRef, receipt).catch(async (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: receiptsRef.path,
+          operation: 'create',
+          requestResourceData: receipt,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        console.error('Receipt save failed:', error);
       });
-      errorEmitter.emit('permission-error', permissionError);
-      console.error('Receipt save failed:', error);
-    });
+    } else {
+      console.warn('Firestore is not initialized. Receipt generated locally.');
+    }
 
     toast({ title: "Bill Issued", description: `Control Number: ${receipt.controlNumber} generated.` });
   };
