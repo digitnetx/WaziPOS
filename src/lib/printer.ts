@@ -2,14 +2,15 @@ import { Receipt } from '@/lib/types';
 
 type NativePrinterBridge = {
   isAvailable?: () => boolean;
-  printReceipt?: (payload: string) => void;
-  printText?: (text: string) => void;
+  getStatus?: () => string;
+  testPrint?: () => boolean;
+  printReceipt?: (payload: string) => boolean | void;
 };
 
 declare global {
   interface Window {
+    Sunmi?: NativePrinterBridge;
     WaziPOSPrinter?: NativePrinterBridge;
-    Android?: NativePrinterBridge;
   }
 }
 
@@ -17,99 +18,122 @@ export type PrinterResult = {
   printed: boolean;
   native: boolean;
   message: string;
+  status?: string;
 };
 
 const getNativePrinter = (): NativePrinterBridge | null => {
   if (typeof window === 'undefined') return null;
-
-  const candidates = [window.WaziPOSPrinter, window.Android];
+  const candidates = [window.Sunmi, window.WaziPOSPrinter];
   for (const bridge of candidates) {
     if (!bridge) continue;
     if (typeof bridge.isAvailable === 'function' && !bridge.isAvailable()) continue;
-    if (bridge.printReceipt || bridge.printText) return bridge;
+    if (typeof bridge.printReceipt === 'function') return bridge;
   }
-
   return null;
 };
 
-const buildPrinterPayload = (receipt: Receipt, paperWidth: '58mm' | '80mm') => ({
-  type: 'receipt',
-  paperWidth,
-  cut: true,
-  openDrawer: false,
-  receipt: {
-    billItem: receipt.billItem,
-    customerName: receipt.customerName,
-    customerPhone: receipt.customerPhone,
-    amount: receipt.amount,
-    paymentOption: receipt.paymentOption,
-    expiryDate: receipt.expiryDate,
-    controlNumber: receipt.controlNumber,
-    posCenterName: receipt.posCenterName,
-    printedBy: receipt.printedBy,
-    printedAt: receipt.printedAt,
-  },
+const getPrinterStatus = (printer: NativePrinterBridge | null) => {
+  try {
+    return printer?.getStatus?.();
+  } catch {
+    return undefined;
+  }
+};
+
+const buildPayload = (receipt: Receipt) => ({
+  businessName: 'WAZI POS',
+  receiptNumber: '',
+  billItem: receipt.billItem,
+  customerName: receipt.customerName,
+  customerPhone: receipt.customerPhone,
+  amount: String(receipt.amount),
+  paymentOption: receipt.paymentOption,
+  expiryDate: receipt.expiryDate,
+  controlNumber: receipt.controlNumber,
+  posCenterName: receipt.posCenterName,
+  printedAt: receipt.printedAt,
+  printedBy: receipt.printedBy,
 });
 
-const buildPlainText = (receipt: Receipt) => {
-  const amount = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(receipt.amount);
-
+const buildBrowserText = (receipt: Receipt) => {
+  const amount = new Intl.NumberFormat('en-US').format(receipt.amount);
   return [
+    'WAZI POS',
     'Ministry of Blue Economy and Fisheries',
-    '',
     'GOVERNMENT BILL',
     '',
     `BillItem : ${receipt.billItem}`,
-    '(TZS)',
+    `(TZS)`,
     `Payer name : ${receipt.customerName}`,
     `Payer phone : ${receipt.customerPhone}`,
     `Amount : TZS ${amount}`,
     `Pay option : ${receipt.paymentOption}`,
-    `Expire Date : ${receipt.expiryDate.replace(/:/g, '')}`,
+    `Expire Date : ${receipt.expiryDate}`,
     `ControlNumber : ${receipt.controlNumber}`,
     '',
     'Lipa kupitia Benki (NMB/BOT/PBZ) na',
     'Mawakala wake au Mitandao ya Simu',
     '(kwa kuchagua "Malipo ya Serikali")',
-    'Piga namba 0777350786 kwa maelezo',
-    'Zaidi.',
+    'Piga namba 0777350786 kwa maelezo Zaidi.',
     '',
     `POS center : ${receipt.posCenterName}`,
-    `Printed on : ${receipt.printedAt.replace(' ', 'T')}`,
+    `Printed on : ${receipt.printedAt}`,
     `Printed By : ${receipt.printedBy}`,
-    '',
-    '',
   ].join('\n');
+};
+
+export const getNativePrinterStatus = (): string => {
+  const printer = getNativePrinter();
+  return getPrinterStatus(printer) ?? 'NOT_AVAILABLE';
+};
+
+export const testNativePrinter = (): boolean => {
+  const printer = getNativePrinter();
+  try {
+    return Boolean(printer?.testPrint?.());
+  } catch {
+    return false;
+  }
 };
 
 export const printReceipt = (
   receipt: Receipt,
-  paperWidth: '58mm' | '80mm' = '58mm'
+  _paperWidth: '58mm' | '80mm' = '58mm'
 ): PrinterResult => {
   if (typeof window === 'undefined') {
     return { printed: false, native: false, message: 'Printing is only available in the browser.' };
   }
 
-  const nativePrinter = getNativePrinter();
+  const printer = getNativePrinter();
+  if (printer?.printReceipt) {
+    const status = getPrinterStatus(printer);
+    if (status === 'OUT_OF_PAPER') {
+      return { printed: false, native: true, status, message: 'Printer is out of paper.' };
+    }
+    if (status === 'COVER_OPEN') {
+      return { printed: false, native: true, status, message: 'Printer cover is open.' };
+    }
+    if (status === 'HARDWARE_ERROR' || status === 'CUTTER_ERROR') {
+      return { printed: false, native: true, status, message: `Printer error: ${status}.` };
+    }
 
-  if (nativePrinter?.printReceipt) {
-    nativePrinter.printReceipt(JSON.stringify(buildPrinterPayload(receipt, paperWidth)));
-    return { printed: true, native: true, message: 'Receipt sent to the POS printer.' };
-  }
-
-  if (nativePrinter?.printText) {
-    nativePrinter.printText(buildPlainText(receipt));
-    return { printed: true, native: true, message: 'Receipt sent to the POS printer.' };
+    try {
+      const result = printer.printReceipt(JSON.stringify(buildPayload(receipt)));
+      if (result === false) {
+        return { printed: false, native: true, status, message: 'The POS printer rejected the receipt. Please try again.' };
+      }
+      return { printed: true, native: true, status, message: 'Receipt sent to the POS thermal printer.' };
+    } catch (error) {
+      console.error('Native printer bridge error:', error);
+      return { printed: false, native: true, status, message: 'Could not communicate with the POS printer.' };
+    }
   }
 
   window.print();
   return {
     printed: true,
     native: false,
-    message: 'System print dialog opened. For automatic POS printing, install the WaziPOS native printer bridge.',
+    message: `Browser print dialog opened. ${buildBrowserText(receipt).length > 0 ? 'Use a browser printer when running outside the POS APK.' : ''}`,
   };
 };
 
