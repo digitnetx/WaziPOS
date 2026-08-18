@@ -1,5 +1,3 @@
-import 'server-only';
-
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -8,10 +6,7 @@ export function supabaseServerConfig() {
     throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables.');
   }
 
-  return {
-    url: SUPABASE_URL.replace(/\/$/, ''),
-    key: SUPABASE_SERVICE_ROLE_KEY,
-  };
+  return { url: SUPABASE_URL.replace(/\/$/, ''), key: SUPABASE_SERVICE_ROLE_KEY };
 }
 
 export async function supabaseRest<T>(path: string, init: RequestInit = {}): Promise<T> {
