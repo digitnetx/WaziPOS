@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -47,6 +46,32 @@ interface ReceiptFormProps {
   isSubmitting?: boolean;
 }
 
+// Older Android System WebViews may not implement crypto.randomUUID().
+// Keep receipt generation compatible with those WebViews while retaining
+// cryptographically strong UUIDs when the API is available.
+const createReceiptId = (): string => {
+  try {
+    if (typeof globalThis.crypto?.randomUUID === 'function') {
+      return globalThis.crypto.randomUUID();
+    }
+  } catch (error) {
+    console.warn('crypto.randomUUID unavailable; using compatibility UUID', error);
+  }
+
+  const bytes = new Uint8Array(16);
+  if (globalThis.crypto?.getRandomValues) {
+    globalThis.crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+  }
+
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+};
+
 export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting }) => {
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [language, setLanguage] = useState<'English' | 'Swahili'>('English');
@@ -87,20 +112,30 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
   };
 
   const handleFormSubmit = (values: z.infer<typeof formSchema>) => {
-    const now = new Date();
-    const expiry = new Date(now);
-    expiry.setDate(expiry.getDate() + 1);
+    try {
+      const now = new Date();
+      const expiry = new Date(now);
+      expiry.setDate(expiry.getDate() + 1);
 
-    const receipt: Receipt = {
-      ...values,
-      id: crypto.randomUUID(),
-      controlNumber: generateControlNumber(),
-      transactionId: generateTransactionId(),
-      printedAt: format(now, 'yyyy-MM-dd HH:mm:ss'),
-      expiryDate: format(expiry, 'yyyy-MM-dd HH:mm:ss'),
-      printedBy: values.staffName,
-    };
-    onSubmit(receipt);
+      const receipt: Receipt = {
+        ...values,
+        id: createReceiptId(),
+        controlNumber: generateControlNumber(),
+        transactionId: generateTransactionId(),
+        printedAt: format(now, 'yyyy-MM-dd HH:mm:ss'),
+        expiryDate: format(expiry, 'yyyy-MM-dd HH:mm:ss'),
+        printedBy: values.staffName,
+      };
+      onSubmit(receipt);
+    } catch (error) {
+      console.error('Receipt generation failed:', error);
+      // Never leave the POS button apparently frozen if an older WebView
+      // encounters an unsupported browser API.
+      form.setError('root', {
+        type: 'manual',
+        message: 'Unable to generate this receipt on this POS. Please try again.'
+      });
+    }
   };
 
   return (
@@ -270,10 +305,10 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
                   <SelectItem value="Swahili">Swahili</SelectItem>
                 </SelectContent>
               </Select>
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 className="h-8 px-2 shrink-0 text-[11px] gap-1.5"
                 onClick={handleGenerateInstructions}
                 disabled={isGeneratingAI}
@@ -289,10 +324,10 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Textarea 
-                    placeholder="Transaction details or special instructions..." 
+                  <Textarea
+                    placeholder="Transaction details or special instructions..."
                     className="min-h-[70px] text-xs md:text-sm"
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -312,6 +347,9 @@ export const ReceiptForm: React.FC<ReceiptFormProps> = ({ onSubmit, isSubmitting
               </>
             )}
           </Button>
+          {form.formState.errors.root?.message && (
+            <p className="mt-2 text-sm text-destructive text-center">{form.formState.errors.root.message}</p>
+          )}
         </div>
       </form>
     </Form>
