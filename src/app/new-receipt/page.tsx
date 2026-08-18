@@ -9,10 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Printer, Download, ArrowLeft, CheckCircle2, FileText, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore } from '@/firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { printReceipt, isNativePrinterAvailable, getNativePrinterStatus } from '@/lib/printer';
 
@@ -22,30 +18,33 @@ export default function NewReceiptPage() {
   const [isPrinting, setIsPrinting] = useState(false);
   const [paperSize, setPaperSize] = useState<'58mm' | '80mm'>('58mm');
   const { toast } = useToast();
-  const firestore = useFirestore();
 
   const handleReceiptGenerated = async (receipt: Receipt) => {
-    // Receipt generation must not depend on Firebase being initialized.
-    // The POS can generate and print a bill even when the database is offline.
+    // Always move to the receipt screen first. Database availability must never
+    // prevent a POS operator from generating or printing a receipt.
     setCurrentReceipt(receipt);
     setIsSubmitting(false);
 
-    if (firestore) {
-      const receiptsRef = collection(firestore, 'receipts');
-      addDoc(receiptsRef, receipt).catch(async (error) => {
-        const permissionError = new FirestorePermissionError({
-          path: receiptsRef.path,
-          operation: 'create',
-          requestResourceData: receipt,
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        console.error('Receipt save failed:', error);
+    try {
+      const response = await fetch('/api/receipts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(receipt),
       });
-    } else {
-      console.warn('Firestore is not initialized. Receipt generated locally.');
-    }
 
-    toast({ title: "Bill Issued", description: `Control Number: ${receipt.controlNumber} generated.` });
+      if (!response.ok) {
+        console.error('Supabase receipt save failed:', await response.text());
+        toast({ title: 'Bill Issued', description: 'Receipt generated. Database sync failed; it can be retried later.' });
+        return;
+      }
+
+      const result = await response.json();
+      if (result.receipt) setCurrentReceipt(result.receipt as Receipt);
+      toast({ title: 'Bill Issued', description: `Control Number: ${receipt.controlNumber} generated and saved.` });
+    } catch (error) {
+      console.error('Supabase connection failed:', error);
+      toast({ title: 'Bill Issued', description: 'Receipt generated locally. Database is temporarily unavailable.' });
+    }
   };
 
   const handlePrint = () => {
