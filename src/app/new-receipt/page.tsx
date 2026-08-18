@@ -14,7 +14,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { printReceipt, isNativePrinterAvailable } from '@/lib/printer';
+import { printReceipt, isNativePrinterAvailable, getNativePrinterStatus } from '@/lib/printer';
 
 export default function NewReceiptPage() {
   const [currentReceipt, setCurrentReceipt] = useState<Receipt | null>(null);
@@ -48,16 +48,22 @@ export default function NewReceiptPage() {
     setIsPrinting(true);
     try {
       const result = printReceipt(currentReceipt, paperSize);
-      toast({ title: result.native ? 'Printing Receipt' : 'Print Ready', description: result.message });
+      if (result.printed) {
+        toast({ title: result.native ? 'Receipt Printing' : 'Print Ready', description: result.message });
+      } else {
+        toast({ title: 'Printing failed', description: result.message, variant: 'destructive' });
+      }
     } catch (error) {
       console.error('Printer error:', error);
-      toast({ title: 'Printing failed', description: 'Check the POS printer service and try again.', variant: 'destructive' });
+      toast({ title: 'Printing failed', description: 'Check the POS printer and try again.', variant: 'destructive' });
     } finally {
       setIsPrinting(false);
     }
   };
 
   const reset = () => setCurrentReceipt(null);
+  const nativePrinter = isNativePrinterAvailable();
+  const printerStatus = nativePrinter ? getNativePrinterStatus() : 'NOT_AVAILABLE';
 
   return (
     <div className="min-h-svh bg-background pb-10">
@@ -97,7 +103,9 @@ export default function NewReceiptPage() {
                       <Button variant="ghost" onClick={reset} className="gap-2 h-11"><ArrowLeft className="w-4 h-4" />New Entry</Button>
                     </div>
                     <div className="rounded-md border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
-                      {isNativePrinterAvailable() ? 'POS printer bridge detected — direct thermal printing is available.' : 'Browser printer fallback active — direct POS printing requires the native printer bridge.'}
+                      {nativePrinter
+                        ? `SUNMI printer bridge detected — status: ${printerStatus}. Direct thermal printing is available.`
+                        : 'Browser printer fallback active — install/use the WaziPOS POS APK for direct thermal printing.'}
                     </div>
                   </CardContent>
                 </Card>
