@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { ReceiptForm } from '@/components/receipt/ReceiptForm';
-import { ThermalReceipt } from '@/components/receipt/ThermalReceipt';
+import { ThermalReceiptCompact } from '@/components/receipt/ThermalReceiptCompact';
 import { Receipt } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Printer, Download, ArrowLeft, CheckCircle2, FileText, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { printReceipt, isNativePrinterAvailable, getNativePrinterStatus } from '@/lib/printer';
 
 export default function NewReceiptPage() {
@@ -20,24 +20,19 @@ export default function NewReceiptPage() {
   const { toast } = useToast();
 
   const handleReceiptGenerated = async (receipt: Receipt) => {
-    // Always move to the receipt screen first. Database availability must never
-    // prevent a POS operator from generating or printing a receipt.
     setCurrentReceipt(receipt);
     setIsSubmitting(false);
-
     try {
       const response = await fetch('/api/receipts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(receipt),
       });
-
       if (!response.ok) {
         console.error('Supabase receipt save failed:', await response.text());
         toast({ title: 'Bill Issued', description: 'Receipt generated. Database sync failed; it can be retried later.' });
         return;
       }
-
       const result = await response.json();
       if (result.receipt) setCurrentReceipt(result.receipt as Receipt);
       toast({ title: 'Bill Issued', description: `Control Number: ${receipt.controlNumber} generated and saved.` });
@@ -127,8 +122,8 @@ export default function NewReceiptPage() {
                 </div>
                 <div className="relative bg-neutral-200 dark:bg-neutral-800 rounded-xl p-4 md:p-12 overflow-hidden flex justify-center border shadow-inner min-h-[600px]">
                   <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:30px_30px]" />
-                  <div id="thermal-receipt-print-area" data-paper-size={paperSize} className="relative z-10 scale-90 sm:scale-100 origin-top shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
-                    <ThermalReceipt receipt={currentReceipt} paperWidth={paperSize} />
+                  <div id="thermal-receipt-print-area" data-paper-size={paperSize} className="relative z-10 origin-top shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
+                    <ThermalReceiptCompact receipt={currentReceipt} paperWidth={paperSize} />
                   </div>
                 </div>
               </div>
