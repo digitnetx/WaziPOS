@@ -10,11 +10,7 @@ interface ThermalReceiptCompactProps {
   paperWidth?: '58mm' | '80mm';
 }
 
-/**
- * Government-bill thermal receipt layout based on the supplied original.
- * Keep the typography plain, compact and left aligned, with only the two
- * headings centered and deliberate whitespace between the heading sections.
- */
+/** Government-bill receipt layout matched to the supplied clear original. */
 export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ receipt, className, id, paperWidth = '58mm' }) => {
   const amount = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: receipt.currency === 'USD' ? 2 : 0,
@@ -31,10 +27,10 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
     background: '#fff',
     color: '#000',
     fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: small ? '11px' : '11.5px',
+    fontSize: small ? '13px' : '13.5px',
     fontWeight: 400,
-    lineHeight: 1.22,
-    padding: small ? '7px 7px 10px' : '9px 9px 11px',
+    lineHeight: 1.28,
+    padding: small ? '6px 5px 9px' : '8px 8px 10px',
     boxSizing: 'border-box',
     textAlign: 'left',
     margin: '0 auto',
@@ -42,22 +38,22 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
     wordBreak: 'normal',
   };
 
-  const row: React.CSSProperties = { margin: 0, lineHeight: 1.22 };
+  const row: React.CSSProperties = { margin: 0, lineHeight: 1.28 };
 
   return (
     <div id={id} style={style} className={className}>
-      <div style={{ textAlign: 'center', marginBottom: small ? '16px' : '18px' }}>
+      <div style={{ textAlign: 'center', marginBottom: small ? '12px' : '14px' }}>
         <div style={{
-          fontSize: small ? '11px' : '11.5px',
+          fontSize: small ? '13px' : '13.5px',
           fontWeight: 600,
           lineHeight: 1.12,
           whiteSpace: 'nowrap',
-          marginBottom: small ? '18px' : '20px',
+          marginBottom: small ? '14px' : '16px',
         }}>
           Ministry of Blue Economy and Fisheries
         </div>
         <div style={{
-          fontSize: small ? '12px' : '12.5px',
+          fontSize: small ? '14px' : '14.5px',
           fontWeight: 700,
           lineHeight: 1.12,
         }}>
@@ -66,10 +62,10 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
       </div>
 
       <div>
-        <div style={{ ...row, marginBottom: small ? '4px' : '5px', whiteSpace: 'nowrap' }}>
+        <div style={{ ...row, marginBottom: small ? '3px' : '4px', whiteSpace: 'nowrap' }}>
           BillItem : {receipt.billItem}
         </div>
-        <div style={{ ...row, marginBottom: small ? '7px' : '8px' }}>({receipt.currency})</div>
+        <div style={{ ...row, marginBottom: small ? '6px' : '7px' }}>({receipt.currency})</div>
         <div style={row}>Payer name : {receipt.customerName}</div>
         <div style={row}>Payer phone : {receipt.customerPhone}</div>
         <div style={row}>Amount : {receipt.currency} {amount}</div>
@@ -78,12 +74,13 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
         <div style={{ ...row, fontWeight: 700 }}>ControlNumber : {receipt.controlNumber}</div>
       </div>
 
-      <div style={{ marginTop: small ? '10px' : '11px', marginBottom: small ? '14px' : '15px', lineHeight: 1.22 }}>
-        Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa kuchagua &quot;Malipo ya Serikali&quot;)<br />
+      <div style={{ marginTop: small ? '9px' : '10px', marginBottom: small ? '13px' : '14px', lineHeight: 1.28 }}>
+        Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa<br />
+        kuchagua &quot;Malipo ya Serikali&quot;)<br />
         Piga namba 0778782798 kwa maelezo zaidi.
       </div>
 
-      <div style={{ lineHeight: 1.22 }}>
+      <div style={{ lineHeight: 1.28 }}>
         <div style={row}>POS center : {receipt.posCenterName}</div>
         <div style={row}>Printed on : {printedOn}</div>
         <div style={row}>Printed By : {receipt.printedBy}</div>
