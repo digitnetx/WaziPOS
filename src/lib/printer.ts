@@ -53,20 +53,25 @@ const buildPayload = (receipt: Receipt) => ({
   posCenterName: receipt.posCenterName,
   printedAt: receipt.printedAt,
   printedBy: receipt.printedBy,
+  currency: receipt.currency,
 });
 
 const buildBrowserText = (receipt: Receipt) => {
-  const amount = new Intl.NumberFormat('en-US').format(receipt.amount);
+  const amount = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: receipt.currency === 'USD' ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(receipt.amount);
   return [
-    'WAZI POS',
     'Ministry of Blue Economy and Fisheries',
-    'GOVERNMENT BILL',
+    '',
+    'Government Bill',
+    '',
     '',
     `BillItem : ${receipt.billItem}`,
-    `(TZS)`,
+    `(${receipt.currency})`,
     `Payer name : ${receipt.customerName}`,
     `Payer phone : ${receipt.customerPhone}`,
-    `Amount : TZS ${amount}`,
+    `Amount : ${receipt.currency} ${amount}`,
     `Pay option : ${receipt.paymentOption}`,
     `Expire Date : ${receipt.expiryDate}`,
     `ControlNumber : ${receipt.controlNumber}`,
