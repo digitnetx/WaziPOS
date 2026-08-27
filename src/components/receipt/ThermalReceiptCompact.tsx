@@ -34,7 +34,7 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
     boxSizing: 'border-box',
     textAlign: 'left',
     margin: '0 auto',
-    overflowWrap: 'break-word',
+    overflowWrap: 'normal',
     wordBreak: 'normal',
   };
 
@@ -62,7 +62,11 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
       </div>
 
       <div>
-        <div style={{ ...row, whiteSpace: 'nowrap' }}>
+        <div style={{
+          ...row,
+          whiteSpace: 'nowrap',
+          fontSize: small ? '11.5px' : '13.5px',
+        }}>
           BillItem : {receipt.billItem}
         </div>
         <div style={row}>({receipt.currency})</div>
