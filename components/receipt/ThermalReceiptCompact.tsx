@@ -10,7 +10,7 @@ interface ThermalReceiptCompactProps {
   paperWidth?: '58mm' | '80mm';
 }
 
-/** Government-bill receipt layout matched to the supplied original. */
+/** Compact government-bill receipt matching the supplied reference. */
 export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ receipt, className, id, paperWidth = '58mm' }) => {
   const amount = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: receipt.currency === 'USD' ? 2 : 0,
@@ -19,68 +19,70 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
   const [expiryDay = '', expiryTime = ''] = (receipt.expiryDate || '').split(' ');
   const expiry = `${expiryDay} ${expiryTime.replace(/:/g, '')}`.trim();
   const [printDay = '', printTime = ''] = (receipt.printedAt || '').split(' ');
-  const printedOn = `${printDay}${printTime ? ` ${printTime}` : ''}`.trim();
+  const printedOn = `${printDay}${printTime ? `T${printTime}` : ''}`.trim();
   const small = paperWidth === '58mm';
 
-  const style: React.CSSProperties = {
+  const base: React.CSSProperties = {
     width: small ? '58mm' : '80mm',
     background: '#fff',
     color: '#000',
     fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: small ? '13px' : '13.5px',
+    fontSize: '16px',
     fontWeight: 400,
-    lineHeight: 1.18,
-    // Explicitly prevent dotted/slashed zero OpenType variants.
+    lineHeight: 1.2,
     fontVariantNumeric: 'normal',
     fontFeatureSettings: '"zero" 0',
-    padding: small ? '6px 4px 9px' : '8px 8px 10px',
+    fontKerning: 'none',
+    padding: small ? '12px 8px 14px' : '12px 10px 14px',
     boxSizing: 'border-box',
     textAlign: 'left',
     margin: '0 auto',
+    overflow: 'hidden',
     overflowWrap: 'normal',
     wordBreak: 'normal',
   };
 
-  const row: React.CSSProperties = { margin: 0, lineHeight: 1.18 };
+  const row: React.CSSProperties = {
+    margin: 0,
+    padding: 0,
+    lineHeight: 1.2,
+    fontWeight: 400,
+    fontVariantNumeric: 'normal',
+    fontFeatureSettings: '"zero" 0',
+  };
 
   return (
-    <div id={id} style={style} className={className}>
-      <div style={{ textAlign: 'center', marginBottom: small ? '8px' : '10px' }}>
-        <div style={{ fontSize: small ? '13px' : '13.5px', fontWeight: 600, lineHeight: 1.08, whiteSpace: 'nowrap', marginBottom: small ? '8px' : '10px' }}>
+    <div id={id} style={base} className={className}>
+      <div style={{ textAlign: 'center', marginBottom: '27px' }}>
+        <div style={{ fontSize: '16px', fontWeight: 600, lineHeight: 1.15, whiteSpace: 'nowrap', marginBottom: '27px' }}>
           Ministry of Blue Economy and Fisheries
         </div>
-        <div style={{ fontSize: small ? '14px' : '14.5px', fontWeight: 700, lineHeight: 1.08 }}>
+        <div style={{ fontSize: '18px', fontWeight: 700, lineHeight: 1.1, whiteSpace: 'nowrap' }}>
           Government Bill
         </div>
       </div>
 
       <div>
-        <div style={{ ...row, whiteSpace: 'nowrap', fontSize: small ? '10.5px' : '13.5px', letterSpacing: small ? '-0.2px' : undefined }}>
-          BillItem : {receipt.billItem}
-        </div>
-        <div style={{ ...row, fontSize: small ? '10.5px' : undefined }}>
-          ({receipt.currency})
-        </div>
-        <div style={{ ...row, fontSize: small ? '10.5px' : undefined }}>
-          Payer name : {receipt.customerName}
-        </div>
-        <div style={row}>Payer phone : {receipt.customerPhone}</div>
-        <div style={row}>Amount : {receipt.currency} {amount}</div>
-        <div style={row}>Pay option : {receipt.paymentOption}</div>
-        <div style={row}>Expire Date : {expiry}</div>
-        <div style={{ ...row, fontWeight: 700 }}>ControlNumber : {receipt.controlNumber}</div>
+        <div style={{ ...row, whiteSpace: 'nowrap' }}>BillItem : {receipt.billItem}</div>
+        <div style={{ ...row, marginTop: '6px' }}>({receipt.currency || 'TZS'})</div>
+        <div style={{ ...row, marginTop: '7px' }}>Payer name : {receipt.customerName}</div>
+        <div style={{ ...row, marginTop: '7px' }}>Payer phone : {receipt.customerPhone}</div>
+        <div style={{ ...row, marginTop: '7px' }}>Amount : {receipt.currency || 'TZS'} {amount}</div>
+        <div style={{ ...row, marginTop: '7px' }}>Pay option : {receipt.paymentOption}</div>
+        <div style={{ ...row, marginTop: '7px' }}>Expire Date : {expiry}</div>
+        <div style={{ ...row, marginTop: '7px' }}>ControlNumber : {receipt.controlNumber}</div>
       </div>
 
-      <div style={{ marginTop: 0, marginBottom: small ? '11px' : '13px', lineHeight: 1.18 }}>
+      <div style={{ marginTop: '47px', marginBottom: '59px', fontSize: '16px', lineHeight: 1.5, fontWeight: 400 }}>
         Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa<br />
         kuchagua &quot;Malipo ya Serikali&quot;)<br />
         Piga namba 0778782798 kwa maelezo zaidi.
       </div>
 
-      <div style={{ lineHeight: 1.18 }}>
-        <div style={row}>POS center : {receipt.posCenterName}</div>
-        <div style={row}>Printed on : {printedOn}</div>
-        <div style={row}>Printed By : {receipt.printedBy}</div>
+      <div style={{ fontSize: '16px', lineHeight: 1.5, fontWeight: 400 }}>
+        <div style={{ ...row, whiteSpace: 'normal' }}>POS center : {receipt.posCenterName}</div>
+        <div style={{ ...row, marginTop: '7px' }}>Printed on : {printedOn}</div>
+        <div style={{ ...row, marginTop: '7px' }}>Printed By : {receipt.printedBy}</div>
       </div>
     </div>
   );
