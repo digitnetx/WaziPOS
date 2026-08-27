@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -11,108 +10,154 @@ interface ThermalReceiptProps {
   paperWidth?: '58mm' | '80mm';
 }
 
-export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({ 
-  receipt, 
-  className, 
+export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
+  receipt,
+  className,
   id,
-  paperWidth = '58mm' 
+  paperWidth = '58mm',
 }) => {
-  // Format values for thermal consistency
-  const formattedAmount = `TZS ${new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+  const formattedAmount = `${receipt.currency || 'TZS'} ${new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: receipt.currency === 'USD' ? 2 : 0,
+    maximumFractionDigits: 2,
   }).format(receipt.amount)}`;
 
-  const [expiryDay, expiryTime] = (receipt.expiryDate || "").split(' ');
-  const cleanExpiryTime = expiryTime ? expiryTime.replace(/:/g, '') : '';
-  const formattedExpireDate = `${expiryDay} ${cleanExpiryTime}`;
-  
-  const [printDay, printTime] = (receipt.printedAt || "").split(' ');
-  const isoPrintDate = `${printDay}T${printTime}`;
+  const [expiryDay = '', expiryTime = ''] = (receipt.expiryDate || '').split(' ');
+  const formattedExpireDate = `${expiryDay} ${expiryTime.replace(/:/g, '')}`.trim();
 
-  // Use a normal proportional font and explicitly disable the OpenType
-  // slashed/dotted-zero feature so every 0 prints as a plain 0.
+  const [printDay = '', printTime = ''] = (receipt.printedAt || '').split(' ');
+  const printedOn = `${printDay}${printTime ? `T${printTime}` : ''}`.trim();
+
+  // Match the photographed government receipt closely:
+  // compact 58mm layout, Arial, normal 0 (no slashed/dotted zero), tight spacing.
   const containerStyle: React.CSSProperties = {
     width: paperWidth === '58mm' ? '58mm' : '80mm',
     backgroundColor: '#fff',
     color: '#000',
     fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: '14px',
-    lineHeight: '1.45',
+    fontSize: paperWidth === '58mm' ? '14px' : '14px',
+    lineHeight: 1.22,
     fontVariantNumeric: 'normal',
     fontFeatureSettings: '"zero" 0',
-    padding: '35px 15px 40px 15px',
+    fontKerning: 'none',
+    padding: paperWidth === '58mm' ? '7px 5px 10px' : '8px 8px 10px',
     boxSizing: 'border-box',
     textAlign: 'left',
     margin: '0 auto',
+    overflow: 'hidden',
   };
 
-  const boldStyle: React.CSSProperties = { fontWeight: 700 };
-  const labelStyle: React.CSSProperties = { fontWeight: 400 };
+  const normal: React.CSSProperties = {
+    fontWeight: 400,
+    fontVariantNumeric: 'normal',
+    fontFeatureSettings: '"zero" 0',
+  };
+
+  const label = normal;
+  const value: React.CSSProperties = {
+    ...normal,
+    fontWeight: 500,
+  };
+
+  const row: React.CSSProperties = {
+    margin: 0,
+    lineHeight: 1.22,
+    whiteSpace: 'nowrap',
+  };
 
   return (
     <div id={id} style={containerStyle} className={className}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '14px', fontWeight: 400 }}>
+      <div style={{ textAlign: 'center', marginBottom: '18px' }}>
+        <div
+          style={{
+            ...normal,
+            fontSize: '14px',
+            lineHeight: 1.1,
+            whiteSpace: 'nowrap',
+            marginBottom: '18px',
+          }}
+        >
           Ministry of Blue Economy and Fisheries
         </div>
-        <div style={{ margin: '35px 0', fontSize: '17px', fontWeight: 700 }}>
+        <div
+          style={{
+            ...normal,
+            fontSize: '17px',
+            fontWeight: 700,
+            lineHeight: 1.05,
+            whiteSpace: 'nowrap',
+          }}
+        >
           Government Bill
         </div>
       </div>
 
-      <div style={{ marginBottom: '0px' }}>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>BillItem : </span>
-          <span style={boldStyle}>{receipt.billItem}</span><br />
-          <span style={boldStyle}>(TZS)</span>
+      <div>
+        <div style={{ ...row, fontSize: '14px' }}>
+          <span style={label}>BillItem : </span>
+          <span style={value}>{receipt.billItem}</span>
         </div>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>Payer name : </span>
-          <span style={boldStyle}>{receipt.customerName}</span>
+
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={value}>({receipt.currency || 'TZS'})</span>
         </div>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>Payer phone : </span>
-          <span style={boldStyle}>{receipt.customerPhone}</span>
+
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>Payer name : </span>
+          <span style={value}>{receipt.customerName}</span>
         </div>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>Amount : </span>
-          <span style={boldStyle}>{formattedAmount}</span>
+
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>Payer phone : </span>
+          <span style={value}>{receipt.customerPhone}</span>
         </div>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>Pay option : </span>
-          <span style={boldStyle}>{receipt.paymentOption}</span>
+
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>Amount : </span>
+          <span style={value}>{formattedAmount}</span>
         </div>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>Expire Date : </span>
-          <span style={boldStyle}>{formattedExpireDate}</span>
+
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>Pay option : </span>
+          <span style={value}>{receipt.paymentOption}</span>
         </div>
-        <div>
-          <span style={labelStyle}>ControlNumber : </span>
-          <span style={boldStyle}>{receipt.controlNumber}</span>
+
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>Expire Date : </span>
+          <span style={value}>{formattedExpireDate}</span>
+        </div>
+
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>ControlNumber : </span>
+          <span style={value}>{receipt.controlNumber}</span>
         </div>
       </div>
 
-      <div style={{ fontSize: '13.5px', lineHeight: '1.4', marginBottom: '35px' }}>
-        Lipa kupitia Benki (NMB/BOT/PBZ) na<br />
-        Mawakala wake au Mitandao ya Simu<br />
-        (kwa kuchagua "Malipo ya Serikali")<br />
-        Piga namba 0777350786 kwa maelezo<br />
-        Zaidi.
+      <div
+        style={{
+          ...normal,
+          fontSize: '14px',
+          lineHeight: 1.55,
+          marginTop: '3px',
+          marginBottom: '28px',
+        }}
+      >
+        Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa<br />
+        kuchagua &quot;Malipo ya Serikali&quot;)<br />
+        Piga namba 0778782798 kwa maelezo zaidi.
       </div>
 
-      <div style={{ fontSize: '13px', lineHeight: '1.4' }}>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>POS center : </span>
-          <span style={boldStyle}>{receipt.posCenterName}</span>
+      <div style={{ ...normal, fontSize: '14px', lineHeight: 1.55 }}>
+        <div style={{ ...row, whiteSpace: 'normal' }}>
+          <span style={label}>POS center : </span>
+          <span style={value}>{receipt.posCenterName}</span>
         </div>
-        <div style={{ marginBottom: '4px' }}>
-          <span style={labelStyle}>Printed on : </span>
-          <span style={boldStyle}>{isoPrintDate}</span>
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>Printed on : </span>
+          <span style={value}>{printedOn}</span>
         </div>
-        <div>
-          <span style={labelStyle}>Printed By : </span>
-          <span style={boldStyle}>{receipt.printedBy}</span>
+        <div style={{ ...row, marginTop: '2px' }}>
+          <span style={label}>Printed By : </span>
+          <span style={value}>{receipt.printedBy}</span>
         </div>
       </div>
     </div>
