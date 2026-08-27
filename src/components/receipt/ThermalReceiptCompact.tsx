@@ -42,13 +42,13 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
 
   return (
     <div id={id} style={style} className={className}>
-      <div style={{ textAlign: 'center', marginBottom: small ? '12px' : '14px' }}>
+      <div style={{ textAlign: 'center', marginBottom: small ? '10px' : '12px' }}>
         <div style={{
           fontSize: small ? '13px' : '13.5px',
           fontWeight: 600,
           lineHeight: 1.12,
           whiteSpace: 'nowrap',
-          marginBottom: small ? '14px' : '16px',
+          marginBottom: small ? '10px' : '12px',
         }}>
           Ministry of Blue Economy and Fisheries
         </div>
@@ -62,10 +62,10 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
       </div>
 
       <div>
-        <div style={{ ...row, marginBottom: small ? '3px' : '4px', whiteSpace: 'nowrap' }}>
+        <div style={{ ...row, whiteSpace: 'nowrap' }}>
           BillItem : {receipt.billItem}
         </div>
-        <div style={{ ...row, marginBottom: small ? '6px' : '7px' }}>({receipt.currency})</div>
+        <div style={row}>({receipt.currency})</div>
         <div style={row}>Payer name : {receipt.customerName}</div>
         <div style={row}>Payer phone : {receipt.customerPhone}</div>
         <div style={row}>Amount : {receipt.currency} {amount}</div>
@@ -74,7 +74,7 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
         <div style={{ ...row, fontWeight: 700 }}>ControlNumber : {receipt.controlNumber}</div>
       </div>
 
-      <div style={{ marginTop: small ? '9px' : '10px', marginBottom: small ? '13px' : '14px', lineHeight: 1.28 }}>
+      <div style={{ marginTop: 0, marginBottom: small ? '12px' : '13px', lineHeight: 1.28 }}>
         Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa<br />
         kuchagua &quot;Malipo ya Serikali&quot;)<br />
         Piga namba 0778782798 kwa maelezo zaidi.
