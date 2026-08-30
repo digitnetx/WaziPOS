@@ -22,12 +22,21 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
   const small = paperWidth === '58mm';
 
   const style: React.CSSProperties = {
-    width: small ? '58mm' : '80mm', background: '#fff', color: '#000',
-    fontFamily: 'Arial, Helvetica, sans-serif', fontSize: small ? '13px' : '13.5px',
-    fontWeight: 400, lineHeight: 1.2, padding: small ? '4px 3px 8px' : '8px 8px 10px',
-    boxSizing: 'border-box', textAlign: 'left', margin: '0 auto', overflow: 'visible',
+    width: small ? '58mm' : '80mm',
+    background: '#fff',
+    color: '#000',
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    fontSize: small ? '13px' : '13.5px',
+    fontWeight: 400,
+    lineHeight: 1.28,
+    padding: small ? '4px 3px 8px' : '8px 8px 10px',
+    boxSizing: 'border-box',
+    textAlign: 'left',
+    margin: '0 auto',
+    overflow: 'visible',
   };
-  const row: React.CSSProperties = { margin: 0, lineHeight: 1.2 };
+
+  const row: React.CSSProperties = { margin: 0, lineHeight: 1.28 };
   const nowrap: React.CSSProperties = { whiteSpace: 'nowrap' };
 
   return (
@@ -54,13 +63,15 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
         <div style={{ ...row, fontWeight: 700 }}>ControlNumber : {receipt.controlNumber}</div>
       </div>
 
-      <div style={{ marginTop: 0, marginBottom: small ? '18px' : '20px', lineHeight: 1.2 }}>
-        Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa<br />
+      <div style={{ marginTop: 0, marginBottom: small ? '20px' : '22px', lineHeight: 1.28 }}>
+        Lipa kupitia Benki (NMB/BOT/PBZ) na M<br />
+        awakala wake au Mitandao ya Simu (kwa<br />
         kuchagua &quot;Malipo ya Serikali&quot;)<br />
-        Piga namba 0778782798 kwa maelezo zaidi.
+        Piga namba 0778782798 kwa maelezo z<br />
+        zaidi.
       </div>
 
-      <div style={{ lineHeight: 1.2 }}>
+      <div style={{ lineHeight: 1.28 }}>
         <div style={row}>POS center : {receipt.posCenterName}</div>
         <div style={row}>Printed on : {printedOn}</div>
         <div style={row}>Printed By : {receipt.printedBy}</div>
