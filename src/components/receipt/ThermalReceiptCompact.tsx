@@ -10,7 +10,6 @@ interface ThermalReceiptCompactProps {
   paperWidth?: '58mm' | '80mm';
 }
 
-/** Government-bill receipt layout tuned to the supplied original thermal receipt. */
 export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ receipt, className, id, paperWidth = '58mm' }) => {
   const amount = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: receipt.currency === 'USD' ? 2 : 0,
@@ -19,7 +18,7 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
   const [expiryDay = '', expiryTime = ''] = (receipt.expiryDate || '').split(' ');
   const expiry = `${expiryDay} ${expiryTime.replace(/:/g, '')}`.trim();
   const [printDay = '', printTime = ''] = (receipt.printedAt || '').split(' ');
-  const printedOn = `${printDay}${printTime ? ` ${printTime}` : ''}`.trim();
+  const printedOn = `${printDay}${printTime ? `T${printTime}` : ''}`.trim();
   const small = paperWidth === '58mm';
 
   const style: React.CSSProperties = {
@@ -29,40 +28,30 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
     fontFamily: 'Arial, Helvetica, sans-serif',
     fontSize: small ? '13px' : '13.5px',
     fontWeight: 400,
-    lineHeight: 1.18,
-    padding: small ? '5px 2px 9px' : '8px 8px 10px',
+    lineHeight: 1.2,
+    padding: small ? '4px 3px 8px' : '8px 8px 10px',
     boxSizing: 'border-box',
     textAlign: 'left',
     margin: '0 auto',
-    overflowWrap: 'normal',
-    wordBreak: 'normal',
+    overflow: 'visible',
   };
 
-  const row: React.CSSProperties = { margin: 0, lineHeight: 1.18 };
+  const row: React.CSSProperties = { margin: 0, lineHeight: 1.2 };
+  const nowrap: React.CSSProperties = { whiteSpace: 'nowrap' };
 
   return (
     <div id={id} style={style} className={className}>
-      <div style={{ textAlign: 'center', marginBottom: small ? '7px' : '9px' }}>
-        <div style={{
-          fontSize: small ? '12.5px' : '13.5px',
-          fontWeight: 600,
-          lineHeight: 1.05,
-          whiteSpace: 'nowrap',
-          marginBottom: small ? '7px' : '9px',
-        }}>
+      <div style={{ textAlign: 'center', marginBottom: small ? '8px' : '10px' }}>
+        <div style={{ ...nowrap, fontSize: small ? '12.5px' : '13.5px', fontWeight: 600, lineHeight: 1.05, marginBottom: small ? '15px' : '17px' }}>
           Ministry of Blue Economy and Fisheries
         </div>
-        <div style={{
-          fontSize: small ? '13.5px' : '14.5px',
-          fontWeight: 700,
-          lineHeight: 1.05,
-        }}>
+        <div style={{ fontSize: small ? '13.5px' : '14.5px', fontWeight: 700, lineHeight: 1.05 }}>
           Government Bill
         </div>
       </div>
 
       <div>
-        <div style={{ ...row, whiteSpace: 'nowrap', fontSize: small ? '10.2px' : '13.5px', letterSpacing: '-0.3px' }}>
+        <div style={{ ...row, ...nowrap, fontSize: small ? '10.5px' : '13.5px', letterSpacing: '-0.2px' }}>
           BillItem : {receipt.billItem}
         </div>
         <div style={row}>({receipt.currency})</div>
@@ -74,13 +63,15 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
         <div style={{ ...row, fontWeight: 700 }}>ControlNumber : {receipt.controlNumber}</div>
       </div>
 
-      <div style={{ marginTop: 0, marginBottom: small ? '18px' : '20px', lineHeight: 1.18 }}>
+      {/* No gap after ControlNumber; only the footer below is separated. */}
+      <div style={{ marginTop: 0, marginBottom: small ? '19px' : '21px', lineHeight: 1.2 }}>
         Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa<br />
         kuchagua &quot;Malipo ya Serikali&quot;)<br />
         Piga namba 0778782798 kwa maelezo zaidi.
       </div>
 
-      <div style={{ lineHeight: 1.18 }}>
+      {/* Clear gap before POS center, then footer lines remain continuous. */}
+      <div style={{ lineHeight: 1.2 }}>
         <div style={row}>POS center : {receipt.posCenterName}</div>
         <div style={row}>Printed on : {printedOn}</div>
         <div style={row}>Printed By : {receipt.printedBy}</div>
