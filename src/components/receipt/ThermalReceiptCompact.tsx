@@ -22,20 +22,11 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
   const small = paperWidth === '58mm';
 
   const style: React.CSSProperties = {
-    width: small ? '58mm' : '80mm',
-    background: '#fff',
-    color: '#000',
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: small ? '13px' : '13.5px',
-    fontWeight: 400,
-    lineHeight: 1.2,
-    padding: small ? '4px 3px 8px' : '8px 8px 10px',
-    boxSizing: 'border-box',
-    textAlign: 'left',
-    margin: '0 auto',
-    overflow: 'visible',
+    width: small ? '58mm' : '80mm', background: '#fff', color: '#000',
+    fontFamily: 'Arial, Helvetica, sans-serif', fontSize: small ? '13px' : '13.5px',
+    fontWeight: 400, lineHeight: 1.2, padding: small ? '4px 3px 8px' : '8px 8px 10px',
+    boxSizing: 'border-box', textAlign: 'left', margin: '0 auto', overflow: 'visible',
   };
-
   const row: React.CSSProperties = { margin: 0, lineHeight: 1.2 };
   const nowrap: React.CSSProperties = { whiteSpace: 'nowrap' };
 
