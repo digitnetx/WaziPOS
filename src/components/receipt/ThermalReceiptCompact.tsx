@@ -74,7 +74,7 @@ export const ThermalReceiptCompact: React.FC<ThermalReceiptCompactProps> = ({ re
         <div style={{ ...row, fontWeight: 700 }}>ControlNumber : {receipt.controlNumber}</div>
       </div>
 
-      <div style={{ marginTop: 0, marginBottom: small ? '16px' : '18px', lineHeight: 1.18 }}>
+      <div style={{ marginTop: 0, marginBottom: small ? '18px' : '20px', lineHeight: 1.18 }}>
         Lipa kupitia Benki (NMB/BOT/PBZ) na Mawakala wake au Mitandao ya Simu (kwa<br />
         kuchagua &quot;Malipo ya Serikali&quot;)<br />
         Piga namba 0778782798 kwa maelezo zaidi.
